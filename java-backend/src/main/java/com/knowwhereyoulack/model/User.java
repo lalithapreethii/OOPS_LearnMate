@@ -35,10 +35,6 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    // Unique username - demonstrates data validation
-    @Column(name = "username", unique = true, nullable = false, length = 50)
-    private String username;
-
     // Unique email - demonstrates data validation
     @Column(name = "email", unique = true, nullable = false, length = 100)
     private String email;
@@ -74,6 +70,10 @@ public class User {
     // One-to-Many: One User has Many Weakness Analyses
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WeaknessAnalysis> weaknessAnalyses = new ArrayList<>();
+
+    // Transient field for JWT token (not persisted)
+    @jakarta.persistence.Transient
+    private String token;
 
     // JPA lifecycle callbacks - demonstrates OOP methods
     @PrePersist
@@ -115,10 +115,9 @@ public class User {
     public User() {
     }
 
-    public User(Long userId, String username, String email, String passwordHash, String fullName, 
+    public User(Long userId, String email, String passwordHash, String fullName, 
                 UserRole role, Boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userId = userId;
-        this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
@@ -137,13 +136,6 @@ public class User {
         this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getEmail() {
         return email;
@@ -209,6 +201,14 @@ public class User {
         this.quizAttempts = quizAttempts;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     // equals and hashCode
     @Override
     public boolean equals(Object o) {
@@ -216,13 +216,12 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return Objects.equals(userId, user.userId) &&
-               Objects.equals(username, user.username) &&
                Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, username, email);
+        return Objects.hash(userId, email);
     }
 
     // toString
@@ -230,7 +229,6 @@ public class User {
     public String toString() {
         return "User{" +
                "userId=" + userId +
-               ", username='" + username + '\'' +
                ", email='" + email + '\'' +
                ", fullName='" + fullName + '\'' +
                ", role=" + role +

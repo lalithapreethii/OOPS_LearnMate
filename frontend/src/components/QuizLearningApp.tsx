@@ -1,19 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BookOpen, MessageSquare, BarChart3, Plus, User, LogOut, ChevronRight, Check, X, Send } from 'lucide-react';
 
 // Configuration - Update these with your backend URLs
 const API_BASE_URL = 'http://localhost:8080/api';
 
+// Types for API responses
+interface AuthResponse {
+  token: string;
+  user: {
+    id: number;
+    email: string;
+    fullName: string;
+  };
+}
+
+interface ApiError {
+  message: string;
+  status: number;
+}
+
 // Axios-like fetch wrapper
 const api = {
-  get: async (url) => {
+  get: async <T,>(url: string): Promise<T> => {
     const response = await fetch(`${API_BASE_URL}${url}`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` }
     });
-    if (!response.ok) throw new Error('Request failed');
+    if (!response.ok) {
+      const error = await response.json() as ApiError;
+      throw new Error(error.message || 'Request failed');
+    }
     return response.json();
   },
-  post: async (url, data) => {
+  post: async <T,>(url: string, data: unknown): Promise<T> => {
     const response = await fetch(`${API_BASE_URL}${url}`, {
       method: 'POST',
       headers: {
@@ -22,39 +40,120 @@ const api = {
       },
       body: JSON.stringify(data)
     });
-    if (!response.ok) throw new Error('Request failed');
+    if (!response.ok) {
+      const error = await response.json() as ApiError;
+      throw new Error(error.message || 'Request failed');
+    }
     return response.json();
   }
 };
 
 export default function QuizLearningApp() {
-  const [currentView, setCurrentView] = useState('login');
-  const [user, setUser] = useState(null);
-  const [topics, setTopics] = useState([]);
-  const [selectedTopic, setSelectedTopic] = useState(null);
-  const [quiz, setQuiz] = useState(null);
+  type View = 'login' | 'dashboard' | 'quiz' | 'chat' | 'analysis' | 'chatbot' | 'analytics' | 'results';
+  
+  interface BaseResponse {
+    success: boolean;
+    message?: string;
+  }
+
+  interface TopicsResponse extends BaseResponse {
+    topics: Topic[];
+  }
+
+  interface QuizResponse extends BaseResponse {
+    quiz: Quiz;
+  }
+
+  interface ResultResponse extends BaseResponse {
+    score: number;
+    feedback: string;
+  }
+
+  interface User {
+    id: number;
+    email: string;
+    fullName: string;
+  }
+
+  interface Topic {
+    id: number;
+    name: string;
+    description: string;
+    quizCount?: number;
+  }
+
+  interface QuizAnswer {
+    questionId: number;
+    correct: boolean;
+    selected: number;
+  }
+
+  interface QuizQuestion {
+    id: number;
+    question: string;
+    options: string[];
+    correctAnswer: number;
+  }
+
+  interface Quiz {
+    id: number;
+    title: string;
+    questions: QuizQuestion[];
+  }
+
+  interface QuizState {
+    currentQuestion: number;
+    answers: QuizAnswer[];
+    score: number;
+  }
+
+  interface ChatMessage {
+    id: number;
+    text: string;
+    sender: 'user' | 'bot' | 'ai';
+    timestamp: Date;
+  }
+
+  const [currentView, setCurrentView] = useState<View>('login');
+  const [user, setUser] = useState<User | null>(null);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
-  const [chatMessages, setChatMessages] = useState([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
 
   // Login Component
   const LoginView = () => {
-    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [credentials, setCredentials] = useState({ 
+      email: '', 
+      password: '',
+      fullName: '' 
+    });
     const [isSignup, setIsSignup] = useState(false);
 
     const handleAuth = async () => {
       setLoading(true);
       try {
         const endpoint = isSignup ? '/auth/register' : '/auth/login';
-        const response = await api.post(endpoint, credentials);
+        const response = await api.post<AuthResponse>(endpoint, credentials);
         setUser(response.user);
         setCurrentView('dashboard');
         localStorage.setItem('token', response.token);
       } catch (error) {
-        alert('Authentication failed. Using demo mode.');
-        setUser({ id: 1, username: credentials.username || 'Demo User' });
+        const message = error instanceof Error ? error.message : 'Authentication failed';
+        alert(message);
+        if (isSignup) return; // Don't allow demo mode for signup
+        // Demo mode only for login
+        setUser({ 
+          id: 1, 
+          email: credentials.email || 'demo@example.com',
+          fullName: credentials.fullName || 'Demo User'
+        });
         setCurrentView('dashboard');
       } finally {
         setLoading(false);
@@ -73,14 +172,28 @@ export default function QuizLearningApp() {
           </div>
           
           <div className="space-y-4">
+            {isSignup && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <input
+                  type="text"
+                  value={credentials.fullName}
+                  onChange={(e) => setCredentials({...credentials, fullName: e.target.value})}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+            )}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input
-                type="text"
-                value={credentials.username}
-                onChange={(e) => setCredentials({...credentials, username: e.target.value})}
+                type="email"
+                value={credentials.email}
+                onChange={(e) => setCredentials({...credentials, email: e.target.value})}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="Enter username"
+                placeholder="Enter email"
+                required
               />
             </div>
             <div>
@@ -91,6 +204,7 @@ export default function QuizLearningApp() {
                 onChange={(e) => setCredentials({...credentials, password: e.target.value})}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Enter password"
+                required
               />
             </div>
             <button
@@ -126,8 +240,8 @@ export default function QuizLearningApp() {
 
     const loadTopics = async () => {
       try {
-        const data = await api.get('/topics');
-        setTopics(data);
+        const response = await api.get<TopicsResponse>('/topics');
+        setTopics(response.topics);
       } catch (error) {
         // Demo data if API fails
         setTopics([
@@ -167,7 +281,7 @@ export default function QuizLearningApp() {
           questions: [
             {
               id: 1,
-              text: 'What is a closure in JavaScript?',
+              question: 'What is a closure in JavaScript?',
               options: [
                 'A function that has access to variables in its outer scope',
                 'A way to close browser windows',
@@ -178,13 +292,13 @@ export default function QuizLearningApp() {
             },
             {
               id: 2,
-              text: 'Which hook is used for side effects in React?',
+              question: 'Which hook is used for side effects in React?',
               options: ['useState', 'useEffect', 'useContext', 'useReducer'],
               correctAnswer: 1
             },
             {
               id: 3,
-              text: 'What does REST stand for?',
+              question: 'What does REST stand for?',
               options: [
                 'Representational State Transfer',
                 'Remote Execution Service Transfer',
@@ -226,7 +340,7 @@ export default function QuizLearningApp() {
                   <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
                     <User className="w-5 h-5 text-white" />
                   </div>
-                  <span className="font-medium text-gray-700">{user?.username}</span>
+                  <span className="font-medium text-gray-700">{user?.fullName}</span>
                 </div>
                 <button
                   onClick={() => { setUser(null); setCurrentView('login'); }}
@@ -274,7 +388,7 @@ export default function QuizLearningApp() {
                       value={newTopic.description}
                       onChange={(e) => setNewTopic({...newTopic, description: e.target.value})}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      rows="3"
+                      rows={3}
                     />
                   </div>
                   <div className="flex space-x-3">
@@ -334,8 +448,16 @@ export default function QuizLearningApp() {
     const handleSubmitAnswer = () => {
       if (selectedAnswer === null) return;
       
-      const isCorrect = selectedAnswer === quiz.questions[currentQuestion].correctAnswer;
-      setAnswers([...answers, { questionId: quiz.questions[currentQuestion].id, correct: isCorrect }]);
+      if (!quiz) return;
+      
+      const currentQ = quiz.questions[currentQuestion];
+      const isCorrect = selectedAnswer === currentQ.correctAnswer;
+      
+      setAnswers(prev => [...prev, { 
+        questionId: currentQ.id, 
+        correct: isCorrect,
+        selected: selectedAnswer 
+      }]);
       
       if (isCorrect) {
         setScore(score + 1);
@@ -417,7 +539,7 @@ export default function QuizLearningApp() {
                   style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
                 ></div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">{question.text}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">{question.question}</h2>
             </div>
 
             <div className="space-y-4 mb-8">
@@ -480,7 +602,7 @@ export default function QuizLearningApp() {
 
   // Results View
   const ResultsView = () => {
-    const percentage = Math.round((score / quiz.questions.length) * 100);
+    const percentage = quiz ? Math.round((score / quiz.questions.length) * 100) : 0;
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -493,7 +615,7 @@ export default function QuizLearningApp() {
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Quiz Complete!</h2>
           <p className="text-gray-600 mb-8">You scored</p>
           <div className="text-6xl font-bold text-indigo-600 mb-8">
-            {score}/{quiz.questions.length}
+            {score}/{quiz?.questions.length || 0}
           </div>
           <p className="text-xl text-gray-700 mb-8">{percentage}% Correct</p>
           <div className="space-y-3">
@@ -525,13 +647,24 @@ export default function QuizLearningApp() {
     const sendMessage = async () => {
       if (!chatInput.trim()) return;
       
-      const userMessage = { text: chatInput, sender: 'user', timestamp: new Date() };
-      setChatMessages([...chatMessages, userMessage]);
+      const userMessage: ChatMessage = { 
+        id: Date.now(), 
+        text: chatInput, 
+        sender: 'user', 
+        timestamp: new Date() 
+      };
+      setChatMessages(prev => [...prev, userMessage]);
       setChatInput('');
       
       try {
         const response = await api.post('/chatbot/message', { message: chatInput });
-        const botMessage = { text: response.reply, sender: 'bot', timestamp: new Date() };
+        const botResponse = response as { reply: string };
+        const botMessage: ChatMessage = { 
+          id: Date.now(), 
+          text: botResponse.reply, 
+          sender: 'bot', 
+          timestamp: new Date() 
+        };
         setChatMessages(prev => [...prev, botMessage]);
       } catch (error) {
         const botMessage = {
