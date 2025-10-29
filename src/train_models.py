@@ -30,7 +30,6 @@ def train_and_evaluate_dataset(dataset_name, train_path, test_path):
     train_df = pd.read_csv(train_path)
     test_df = pd.read_csv(test_path)
     
-<<<<<<< HEAD
     # Verify weakness_level values are correctly encoded
     if 'weakness_level' not in train_df.columns:
         print("Error: Missing weakness_level target column")
@@ -39,9 +38,6 @@ def train_and_evaluate_dataset(dataset_name, train_path, test_path):
     # Ensure values are properly encoded (0, 1, 2)
     train_df['weakness_level'] = train_df['weakness_level'].astype(int)
     test_df['weakness_level'] = test_df['weakness_level'].astype(int)
-    
-=======
->>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
     # Separate features and target
     X_train = train_df.drop('weakness_level', axis=1)
     y_train = train_df['weakness_level']

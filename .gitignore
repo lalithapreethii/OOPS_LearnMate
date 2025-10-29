@@ -34,26 +34,14 @@ node_modules/
 venv/
 env/
 ENV/
-=======
+
 # Distribution / packaging
 dist/
 build/
 *.egg-info/
 
-# Virtual Environment
-venv/
-env/
-
 # Model files
 models/*.pkl
 
-# IDE settings
-.vscode/
-.idea/
-
 # Log files
 *.log
-
-# Jupyter Notebook
-.ipynb_checkpoints
->>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
