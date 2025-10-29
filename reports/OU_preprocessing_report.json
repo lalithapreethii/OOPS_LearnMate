@@ -1,0 +1,430 @@
+{
+    "dataset_name": "OU",
+    "original_shape": [
+        40801,
+        52
+    ],
+    "final_shape": [
+        23028,
+        55
+    ],
+    "features_before": [
+        "id_student",
+        "gender",
+        "region",
+        "highest_education",
+        "age_band",
+        "disability",
+        "early_avg_score",
+        "early_score_std",
+        "early_assessment_count",
+        "early_min_score",
+        "early_max_score",
+        "early_avg_weight",
+        "early_total_weight",
+        "early_banked_count",
+        "early_avg_submission_time",
+        "early_submission_std",
+        "early_CMA_score",
+        "early_TMA_score",
+        "early_score_trend",
+        "early_total_clicks",
+        "early_avg_clicks",
+        "early_clicks_std",
+        "early_activity_count",
+        "early_unique_activities",
+        "early_first_activity_date",
+        "early_last_activity_date",
+        "early_activity_span",
+        "early_activity_density",
+        "first_week_clicks",
+        "early_pref_dataplus",
+        "early_pref_dualpane",
+        "early_pref_externalquiz",
+        "early_pref_forumng",
+        "early_pref_glossary",
+        "early_pref_homepage",
+        "early_pref_htmlactivity",
+        "early_pref_oucollaborate",
+        "early_pref_oucontent",
+        "early_pref_ouelluminate",
+        "early_pref_ouwiki",
+        "early_pref_page",
+        "early_pref_questionnaire",
+        "early_pref_quiz",
+        "early_pref_repeatactivity",
+        "early_pref_resource",
+        "early_pref_sharedsubpage",
+        "early_pref_subpage",
+        "early_pref_url",
+        "early_weekend_ratio",
+        "early_peak_hour",
+        "enrollment_date",
+        "final_result"
+    ],
+    "features_after": [
+        "gender",
+        "region",
+        "highest_education",
+        "age_band",
+        "disability",
+        "early_avg_score",
+        "early_score_std",
+        "early_assessment_count",
+        "early_min_score",
+        "early_max_score",
+        "early_avg_weight",
+        "early_total_weight",
+        "early_banked_count",
+        "early_avg_submission_time",
+        "early_submission_std",
+        "early_CMA_score",
+        "early_TMA_score",
+        "early_score_trend",
+        "early_total_clicks",
+        "early_avg_clicks",
+        "early_clicks_std",
+        "early_activity_count",
+        "early_unique_activities",
+        "early_first_activity_date",
+        "early_last_activity_date",
+        "early_activity_span",
+        "early_activity_density",
+        "first_week_clicks",
+        "early_pref_dataplus",
+        "early_pref_dualpane",
+        "early_pref_externalquiz",
+        "early_pref_forumng",
+        "early_pref_glossary",
+        "early_pref_homepage",
+        "early_pref_htmlactivity",
+        "early_pref_oucollaborate",
+        "early_pref_oucontent",
+        "early_pref_ouelluminate",
+        "early_pref_ouwiki",
+        "early_pref_page",
+        "early_pref_questionnaire",
+        "early_pref_quiz",
+        "early_pref_repeatactivity",
+        "early_pref_resource",
+        "early_pref_sharedsubpage",
+        "early_pref_subpage",
+        "early_pref_url",
+        "early_weekend_ratio",
+        "early_peak_hour",
+        "enrollment_date",
+        "early_engagement_intensity",
+        "early_low_performance_flag",
+        "early_diversity_score",
+        "first_week_ratio",
+        "weakness_level"
+    ],
+    "missing_values": {
+        "early_avg_score": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_score_std": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_assessment_count": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_min_score": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_max_score": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_avg_weight": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_total_weight": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_banked_count": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_avg_submission_time": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_submission_std": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_CMA_score": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_TMA_score": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_score_trend": {
+            "count": 8952,
+            "percentage": 21.94
+        },
+        "early_total_clicks": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_avg_clicks": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_clicks_std": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_activity_count": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_unique_activities": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_first_activity_date": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_last_activity_date": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_activity_span": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_activity_density": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "first_week_clicks": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_dataplus": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_dualpane": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_externalquiz": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_forumng": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_glossary": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_homepage": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_htmlactivity": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_oucollaborate": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_oucontent": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_ouelluminate": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_ouwiki": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_page": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_questionnaire": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_quiz": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_repeatactivity": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_resource": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_sharedsubpage": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_subpage": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_pref_url": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_weekend_ratio": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "early_peak_hour": {
+            "count": 3270,
+            "percentage": 8.01
+        },
+        "enrollment_date": {
+            "count": 36,
+            "percentage": 0.09
+        }
+    },
+    "encoding_mappings": {},
+    "scaling_params": {
+        "mean": [
+            0.5254472815702623,
+            5.865468125759945,
+            1.029789821087372,
+            0.30667014069828036,
+            0.09332117422268543,
+            75.35018884877209,
+            9.734213076033598,
+            2.1639308667708876,
+            66.80779920097272,
+            84.20062532569047,
+            9.391579893421673,
+            21.332334549244397,
+            0.0353048462741011,
+            -0.6394478357610197,
+            2.4663558112272823,
+            22.158014156678824,
+            72.99095593769904,
+            1.95566246474271,
+            579.0559753343755,
+            3.135192923000203,
+            4.7238304500691095,
+            164.86034392912975,
+            7.731327080076428,
+            -9.34827166927219,
+            47.72346708355046,
+            56.799287823519194,
+            9.68645085463784,
+            161.71504255688725,
+            3.252127832910262e-05,
+            0.0004055552812044902,
+            0.0020081676967291942,
+            0.20476988557069484,
+            0.002973110219294216,
+            0.23926457559021372,
+            0.0007630057702666944,
+            0.0023154013594483434,
+            0.21381207454329743,
+            0.000733066679253145,
+            0.010078701721799302,
+            0.0023394394170143974,
+            0.0006810722864787659,
+            0.11090181502791094,
+            1.2165906859342215e-07,
+            0.05606194965003906,
+            1.1749411089918566e-05,
+            0.1111034388609406,
+            0.021577345549139332,
+            0.3412200965571219,
+            0.0,
+            -71.21482542991141,
+            9.613485334401606,
+            0.06531179433732846,
+            0.11047253993334946,
+            0.30591524089538713
+        ],
+        "scale": [
+            0.4993520159773902,
+            3.712980789631492,
+            0.9777257917021074,
+            0.47475323240887946,
+            0.290881990959194,
+            14.794841409708773,
+            9.781481981660814,
+            0.783608370456794,
+            18.77523467695933,
+            14.620019407448655,
+            3.1713531235683217,
+            7.532677764923418,
+            0.273638969382092,
+            4.971186014957128,
+            4.070986574843754,
+            38.04247040747206,
+            18.367203607762086,
+            16.280344112188917,
+            676.8472393851165,
+            1.171410339231634,
+            5.5122230967982775,
+            147.98508216515845,
+            2.2612573327411223,
+            9.965885141312667,
+            14.17099940649004,
+            18.30333774205074,
+            10.24679341255593,
+            230.8786281711825,
+            0.0006419849899988761,
+            0.0024581089799974257,
+            0.007216513109756894,
+            0.17669902511210606,
+            0.017469246282671987,
+            0.12231655192452186,
+            0.009313567225652101,
+            0.007888446791922462,
+            0.17129447724285013,
+            0.005146129103981665,
+            0.024599418420520127,
+            0.010591813457897588,
+            0.0023461442975768166,
+            0.1537260579104864,
+            1.5486596311829997e-05,
+            0.07376333085523464,
+            0.00042662512314774767,
+            0.07770109300059128,
+            0.030720181811110785,
+            0.1918438916358338,
+            1.0,
+            50.12024981470609,
+            10.261147150991585,
+            0.24707521902806642,
+            0.15057634680254034,
+            0.23529597899973695
+        ]
+    },
+    "class_distribution": {
+        "0": 18306,
+        "2": 14017,
+        "1": 8478
+    },
+    "prediction_week": 8,
+    "duplicates_removed": 12016,
+    "train_students": 23028,
+    "test_students": 5757,
+    "student_overlap": 0,
+    "num_features": 54
+}

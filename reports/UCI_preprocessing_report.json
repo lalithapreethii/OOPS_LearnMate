@@ -1,0 +1,556 @@
+{
+    "dataset_name": "UCI",
+    "original_shape": [
+        1044,
+        34
+    ],
+    "final_shape": [
+        1044,
+        83
+    ],
+    "features_before": [
+        "school",
+        "sex",
+        "age",
+        "address",
+        "famsize",
+        "Pstatus",
+        "Medu",
+        "Fedu",
+        "Mjob",
+        "Fjob",
+        "reason",
+        "guardian",
+        "traveltime",
+        "studytime",
+        "failures",
+        "schoolsup",
+        "famsup",
+        "paid",
+        "activities",
+        "nursery",
+        "higher",
+        "internet",
+        "romantic",
+        "famrel",
+        "freetime",
+        "goout",
+        "Dalc",
+        "Walc",
+        "health",
+        "absences",
+        "G1",
+        "G2",
+        "G3",
+        "subject"
+    ],
+    "features_after": [
+        "school",
+        "sex",
+        "age",
+        "address",
+        "famsize",
+        "Pstatus",
+        "Medu",
+        "Fedu",
+        "traveltime",
+        "studytime",
+        "failures",
+        "schoolsup",
+        "famsup",
+        "paid",
+        "activities",
+        "nursery",
+        "higher",
+        "internet",
+        "romantic",
+        "famrel",
+        "freetime",
+        "goout",
+        "Dalc",
+        "Walc",
+        "health",
+        "absences",
+        "subject",
+        "current_score",
+        "score_trend",
+        "performance_consistency",
+        "current_performance_level",
+        "family_education",
+        "parent_education_gap",
+        "family_size_num",
+        "parent_status_num",
+        "urban",
+        "study_efficiency",
+        "time_management",
+        "attendance_rate",
+        "has_failures",
+        "failure_count",
+        "school_support",
+        "family_support",
+        "paid_classes",
+        "total_support",
+        "family_relationship_quality",
+        "family_support_score",
+        "school_support_score",
+        "support_system_strength",
+        "social_activity_level",
+        "romantic_relationship",
+        "workday_alcohol",
+        "weekend_alcohol",
+        "avg_alcohol_consumption",
+        "social_study_balance",
+        "free_time_management",
+        "health_status",
+        "health_risk",
+        "wants_higher_education",
+        "has_internet",
+        "has_nursery",
+        "educational_aspiration",
+        "academic_risk",
+        "social_risk",
+        "environmental_risk",
+        "psychosocial_risk_score",
+        "internet_study_effect",
+        "education_support_interaction",
+        "age_maturity",
+        "Mjob_health",
+        "Mjob_other",
+        "Mjob_services",
+        "Mjob_teacher",
+        "Fjob_health",
+        "Fjob_other",
+        "Fjob_services",
+        "Fjob_teacher",
+        "reason_home",
+        "reason_other",
+        "reason_reputation",
+        "guardian_mother",
+        "guardian_other"
+    ],
+    "missing_values": {},
+    "encoding_mappings": {
+        "school": {
+            "type": "label",
+            "mapping": {
+                "GP": 0.0,
+                "MS": 1.0
+            }
+        },
+        "sex": {
+            "type": "label",
+            "mapping": {
+                "F": 0.0,
+                "M": 1.0
+            }
+        },
+        "address": {
+            "type": "label",
+            "mapping": {
+                "R": 0.0,
+                "U": 1.0
+            }
+        },
+        "famsize": {
+            "type": "label",
+            "mapping": {
+                "GT3": 0.0,
+                "LE3": 1.0
+            }
+        },
+        "Pstatus": {
+            "type": "label",
+            "mapping": {
+                "A": 0.0,
+                "T": 1.0
+            }
+        },
+        "Mjob": {
+            "type": "one-hot",
+            "generated_columns": [
+                "Mjob_health",
+                "Mjob_other",
+                "Mjob_services",
+                "Mjob_teacher"
+            ]
+        },
+        "Fjob": {
+            "type": "one-hot",
+            "generated_columns": [
+                "Fjob_health",
+                "Fjob_other",
+                "Fjob_services",
+                "Fjob_teacher"
+            ]
+        },
+        "reason": {
+            "type": "one-hot",
+            "generated_columns": [
+                "reason_home",
+                "reason_other",
+                "reason_reputation"
+            ]
+        },
+        "guardian": {
+            "type": "one-hot",
+            "generated_columns": [
+                "guardian_mother",
+                "guardian_other"
+            ]
+        },
+        "schoolsup": {
+            "type": "label",
+            "mapping": {
+                "no": 0.0,
+                "yes": 1.0
+            }
+        },
+        "famsup": {
+            "type": "label",
+            "mapping": {
+                "no": 0.0,
+                "yes": 1.0
+            }
+        },
+        "paid": {
+            "type": "label",
+            "mapping": {
+                "no": 0.0,
+                "yes": 1.0
+            }
+        },
+        "activities": {
+            "type": "label",
+            "mapping": {
+                "no": 0.0,
+                "yes": 1.0
+            }
+        },
+        "nursery": {
+            "type": "label",
+            "mapping": {
+                "no": 0.0,
+                "yes": 1.0
+            }
+        },
+        "higher": {
+            "type": "label",
+            "mapping": {
+                "no": 0.0,
+                "yes": 1.0
+            }
+        },
+        "internet": {
+            "type": "label",
+            "mapping": {
+                "no": 0.0,
+                "yes": 1.0
+            }
+        },
+        "romantic": {
+            "type": "label",
+            "mapping": {
+                "no": 0.0,
+                "yes": 1.0
+            }
+        },
+        "subject": {
+            "type": "label",
+            "mapping": {
+                "math": 0.0,
+                "portuguese": 1.0
+            }
+        }
+    },
+    "scaling_params": {
+        "school": {
+            "mean": 0.23952095808383234,
+            "scale": 0.4267911300887536
+        },
+        "sex": {
+            "mean": 0.4287425149700599,
+            "scale": 0.4948963233114668
+        },
+        "age": {
+            "mean": 16.682634730538922,
+            "scale": 1.2395180653152624
+        },
+        "address": {
+            "mean": 0.7401197604790419,
+            "scale": 0.43856869544860083
+        },
+        "famsize": {
+            "mean": 0.29221556886227545,
+            "scale": 0.4547808595101296
+        },
+        "Pstatus": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "Medu": {
+            "mean": 2.6,
+            "scale": 1.1205216920146834
+        },
+        "Fedu": {
+            "mean": 2.4059880239520957,
+            "scale": 1.0896189851460492
+        },
+        "traveltime": {
+            "mean": 1.4784431137724552,
+            "scale": 0.6764755228324983
+        },
+        "studytime": {
+            "mean": 1.9592814371257485,
+            "scale": 0.7657453563249758
+        },
+        "failures": {
+            "mean": 0.0,
+            "scale": 1.0
+        },
+        "schoolsup": {
+            "mean": 0.0,
+            "scale": 1.0
+        },
+        "famsup": {
+            "mean": 0.6167664670658682,
+            "scale": 0.4861744462319626
+        },
+        "paid": {
+            "mean": 0.0,
+            "scale": 1.0
+        },
+        "activities": {
+            "mean": 0.5017964071856288,
+            "scale": 0.49999677291080935
+        },
+        "nursery": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "higher": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "internet": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "romantic": {
+            "mean": 0.36167664670658684,
+            "scale": 0.4804858477974826
+        },
+        "famrel": {
+            "mean": 4.0,
+            "scale": 0.7738232325341369
+        },
+        "freetime": {
+            "mean": 3.2395209580838324,
+            "scale": 0.9662544565022505
+        },
+        "goout": {
+            "mean": 3.1497005988023954,
+            "scale": 1.1551952035319029
+        },
+        "Dalc": {
+            "mean": 1.4269461077844312,
+            "scale": 0.7357783060531911
+        },
+        "Walc": {
+            "mean": 2.2634730538922154,
+            "scale": 1.2893093022307787
+        },
+        "health": {
+            "mean": 3.5281437125748503,
+            "scale": 1.43693312082294
+        },
+        "absences": {
+            "mean": 4.037125748502994,
+            "scale": 4.526416025740401
+        },
+        "subject": {
+            "mean": 0.6239520958083832,
+            "scale": 0.4843922769251275
+        },
+        "current_score": {
+            "mean": 11.239820359281437,
+            "scale": 3.0289102945646365
+        },
+        "score_trend": {
+            "mean": 0.08263473053892216,
+            "scale": 1.4088251374020218
+        },
+        "performance_consistency": {
+            "mean": 0.6872061711771058,
+            "scale": 0.5575226548145211
+        },
+        "current_performance_level": {
+            "mean": 0.5619910179640718,
+            "scale": 0.1514455147282318
+        },
+        "family_education": {
+            "mean": 2.502994011976048,
+            "scale": 1.001640878292185
+        },
+        "parent_education_gap": {
+            "mean": 0.6059880239520958,
+            "scale": 0.7082660448417218
+        },
+        "family_size_num": {
+            "mean": 0.7077844311377246,
+            "scale": 0.4547808595101296
+        },
+        "parent_status_num": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "urban": {
+            "mean": 0.7401197604790419,
+            "scale": 0.43856869544860083
+        },
+        "study_efficiency": {
+            "mean": 0.8473253493013971,
+            "scale": 0.3920044603601383
+        },
+        "time_management": {
+            "mean": 0.5036127744510978,
+            "scale": 0.2514811514820125
+        },
+        "attendance_rate": {
+            "mean": 0.9468799243618027,
+            "scale": 0.0595581056018474
+        },
+        "has_failures": {
+            "mean": 0.0,
+            "scale": 1.0
+        },
+        "failure_count": {
+            "mean": 0.0,
+            "scale": 1.0
+        },
+        "school_support": {
+            "mean": 0.0,
+            "scale": 1.0
+        },
+        "family_support": {
+            "mean": 0.6167664670658682,
+            "scale": 0.4861744462319626
+        },
+        "paid_classes": {
+            "mean": 0.0,
+            "scale": 1.0
+        },
+        "total_support": {
+            "mean": 0.9377245508982036,
+            "scale": 0.7500592205335743
+        },
+        "family_relationship_quality": {
+            "mean": 0.8,
+            "scale": 0.15476464650682736
+        },
+        "family_support_score": {
+            "mean": 0.7032335329341318,
+            "scale": 0.18770204909596425
+        },
+        "school_support_score": {
+            "mean": 0.26089820359281435,
+            "scale": 0.1970047458235777
+        },
+        "support_system_strength": {
+            "mean": 0.5264910179640718,
+            "scale": 0.1491112139006983
+        },
+        "social_activity_level": {
+            "mean": 0.629940119760479,
+            "scale": 0.23103904070638057
+        },
+        "romantic_relationship": {
+            "mean": 0.36167664670658684,
+            "scale": 0.4804858477974826
+        },
+        "workday_alcohol": {
+            "mean": 0.2853892215568863,
+            "scale": 0.1471556612106382
+        },
+        "weekend_alcohol": {
+            "mean": 0.45269461077844314,
+            "scale": 0.2578618604461557
+        },
+        "avg_alcohol_consumption": {
+            "mean": 0.3726347305389222,
+            "scale": 0.19477363982284043
+        },
+        "social_study_balance": {
+            "mean": 0.5180039920159681,
+            "scale": 0.2624565508838144
+        },
+        "free_time_management": {
+            "mean": 0.5036127744510978,
+            "scale": 0.2514811514820125
+        },
+        "health_status": {
+            "mean": 0.7056287425149701,
+            "scale": 0.287386624164588
+        },
+        "health_risk": {
+            "mean": 0.29437125748502996,
+            "scale": 0.287386624164588
+        },
+        "wants_higher_education": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "has_internet": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "has_nursery": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "educational_aspiration": {
+            "mean": 0.8220359281437127,
+            "scale": 0.1494282072713521
+        },
+        "academic_risk": {
+            "mean": 0.19008962338480928,
+            "scale": 0.08973237776887058
+        },
+        "social_risk": {
+            "mean": 0.2521916167664671,
+            "scale": 0.1445666219885989
+        },
+        "environmental_risk": {
+            "mean": 0.3516392215568862,
+            "scale": 0.18451609232513824
+        },
+        "psychosocial_risk_score": {
+            "mean": 0.25475228490387647,
+            "scale": 0.08562488946426629
+        },
+        "internet_study_effect": {
+            "mean": 1.5802395209580837,
+            "scale": 1.0457349660771686
+        },
+        "education_support_interaction": {
+            "mean": 1.8352095808383235,
+            "scale": 1.0025934712787243
+        },
+        "age_maturity": {
+            "mean": 0.24037639007698883,
+            "scale": 0.1770740093307518
+        }
+    },
+    "class_distribution": {
+        "train": {
+            "1": 416,
+            "2": 235,
+            "0": 184
+        },
+        "test": {
+            "1": 104,
+            "2": 59,
+            "0": 46
+        }
+    },
+    "prediction_target": "G3"
+}

@@ -1,0 +1,22 @@
+# Large data files
+data/raw/
+*.csv
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Models
+*.pkl
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/

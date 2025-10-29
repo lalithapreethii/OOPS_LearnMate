@@ -1,0 +1,25 @@
+2025-10-23 22:15:38,301 - ERROR - Error loading UCI dataset: 
+2025-10-23 22:15:38,301 - ERROR - Error loading UCI dataset: 
+2025-10-23 22:15:38,301 - ERROR - Error loading OU dataset: OU dataset file studentInfo not found in D:\KnowWhereYouLack\src\data\raw\ou_data
+2025-10-23 22:15:38,301 - ERROR - Error loading OU dataset: OU dataset file studentInfo not found in D:\KnowWhereYouLack\src\data\raw\ou_data
+2025-10-23 22:15:38,301 - ERROR - Error loading AI dataset: No CSV files found in D:\KnowWhereYouLack\src\data\raw\ai_course_data
+2025-10-23 22:15:38,301 - ERROR - Error loading AI dataset: No CSV files found in D:\KnowWhereYouLack\src\data\raw\ai_course_data
+2025-10-23 22:16:40,922 - ERROR - Error loading UCI dataset: 
+2025-10-23 22:16:40,922 - ERROR - Error loading UCI dataset: 
+2025-10-23 22:17:08,696 - ERROR - Error loading OU dataset: Unable to allocate 8.86 GiB for an array with shape (9, 132167493) and data type object
+2025-10-23 22:17:08,757 - ERROR - Error loading OU dataset: Unable to allocate 8.86 GiB for an array with shape (9, 132167493) and data type object
+2025-10-23 22:17:10,103 - ERROR - Error loading AI dataset: cannot access local variable 'math_path' where it is not associated with a value
+2025-10-23 22:17:10,103 - ERROR - Error loading AI dataset: cannot access local variable 'math_path' where it is not associated with a value
+2025-10-23 22:18:40,642 - INFO - Successfully loaded UCI dataset with shape (1044, 34)
+2025-10-23 22:19:09,122 - ERROR - Error loading OU dataset: Unable to allocate 8.86 GiB for an array with shape (9, 132167493) and data type object
+2025-10-23 22:19:09,168 - ERROR - Error loading OU dataset: Unable to allocate 8.86 GiB for an array with shape (9, 132167493) and data type object
+2025-10-23 22:19:10,314 - ERROR - Error loading AI dataset: cannot access local variable 'math_path' where it is not associated with a value
+2025-10-23 22:19:10,314 - ERROR - Error loading AI dataset: cannot access local variable 'math_path' where it is not associated with a value
+2025-10-23 22:19:52,414 - INFO - Successfully loaded UCI dataset with shape (1044, 34)
+2025-10-23 22:19:52,575 - INFO - Successfully loaded OU dataset with shape (32593, 6)
+2025-10-23 22:19:52,575 - ERROR - Error loading AI dataset: AI course dataset file not found in D:\KnowWhereYouLack\data\raw\ai_course_data
+2025-10-23 22:19:52,586 - ERROR - Error loading AI dataset: AI course dataset file not found in D:\KnowWhereYouLack\data\raw\ai_course_data
+2025-10-23 22:20:19,526 - INFO - Successfully loaded UCI dataset with shape (1044, 34)
+2025-10-23 22:20:19,653 - INFO - Successfully loaded OU dataset with shape (32593, 6)
+2025-10-23 22:20:19,665 - ERROR - Error loading AI dataset: cannot access local variable 'math_path' where it is not associated with a value
+2025-10-23 22:20:19,666 - ERROR - Error loading AI dataset: cannot access local variable 'math_path' where it is not associated with a value

@@ -1,0 +1,16 @@
+com\knowwhereyoulack\model\LearningResource$DifficultyLevel.class
+com\knowwhereyoulack\model\WeaknessAnalysis.class
+com\knowwhereyoulack\model\Subject.class
+com\knowwhereyoulack\model\Topic$DifficultyLevel.class
+com\knowwhereyoulack\KnowWhereYouLackApplication.class
+com\knowwhereyoulack\model\QuizAttempt.class
+com\knowwhereyoulack\model\QuizResponse.class
+com\knowwhereyoulack\model\LearningResource.class
+com\knowwhereyoulack\model\Question$QuestionType.class
+com\knowwhereyoulack\model\QuestionOption.class
+com\knowwhereyoulack\model\Topic.class
+com\knowwhereyoulack\model\Question.class
+com\knowwhereyoulack\model\User.class
+com\knowwhereyoulack\model\WeaknessAnalysis$StrengthLevel.class
+com\knowwhereyoulack\model\LearningResource$ResourceType.class
+com\knowwhereyoulack\model\User$UserRole.class

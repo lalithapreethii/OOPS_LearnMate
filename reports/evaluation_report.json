@@ -1,0 +1,73 @@
+{
+    "metrics": {
+        "UCI": {
+            "ensemble": {
+                "accuracy": 0.12440191387559808,
+                "precision": 1.0,
+                "recall": 0.12440191387559808,
+                "f1": 0.22127659574468084
+            }
+        },
+        "OU": {
+            "ensemble": {
+                "accuracy": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "naive_bayes": {
+                "accuracy": 0.8951775578177041,
+                "precision": 0.8958781962720905,
+                "recall": 0.8951775578177041,
+                "f1": 0.8952289088927354
+            },
+            "decision_tree": {
+                "accuracy": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "svm": {
+                "accuracy": 0.9908758268048975,
+                "precision": 0.9908793625313236,
+                "recall": 0.9908758268048975,
+                "f1": 0.9908760019736866
+            },
+            "logistic_regression": {
+                "accuracy": 0.9964347703710653,
+                "precision": 0.9964367651940799,
+                "recall": 0.9964347703710653,
+                "f1": 0.996434973082972
+            }
+        },
+        "AI": {
+            "ensemble": {
+                "accuracy": 0.08536585365853659,
+                "precision": 1.0,
+                "recall": 0.08536585365853659,
+                "f1": 0.15730337078651685
+            }
+        }
+    },
+    "summary": {
+        "best_model": {
+            "UCI": {
+                "model": "ensemble",
+                "f1_score": 0.22127659574468084
+            },
+            "OU": {
+                "model": "ensemble",
+                "f1_score": 1.0
+            },
+            "AI": {
+                "model": "ensemble",
+                "f1_score": 0.15730337078651685
+            }
+        },
+        "improvement_over_baseline": {
+            "UCI": NaN,
+            "OU": 3.025342161614145,
+            "AI": NaN
+        }
+    }
+}

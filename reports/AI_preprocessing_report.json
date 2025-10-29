@@ -1,0 +1,174 @@
+{
+    "dataset_name": "AI",
+    "original_shape": [
+        410,
+        12
+    ],
+    "final_shape": [
+        410,
+        27
+    ],
+    "features_before": [
+        "Student Id",
+        "Quiz ",
+        "Midterm",
+        "Assignment_1",
+        "Assignment_2",
+        "Assignment_3",
+        "Project",
+        "Presentation",
+        "Final_Exam",
+        "Total",
+        "Grade",
+        "Categories"
+    ],
+    "features_after": [
+        "Student Id",
+        "current_avg_score",
+        "performance_consistency",
+        "current_performance_level",
+        "quiz_performance",
+        "assignment_performance",
+        "assignment_consistency",
+        "exam_performance",
+        "score_progression",
+        "overall_improvement",
+        "improvement_rate",
+        "score_volatility",
+        "rank_consistency",
+        "theory_score",
+        "practical_score",
+        "theory_vs_practical",
+        "theoretical_strength",
+        "performance_risk",
+        "consistency_risk",
+        "progression_risk",
+        "comprehensive_risk_score",
+        "high_performer",
+        "consistent_performer",
+        "improving_student",
+        "performance_zscore",
+        "distance_from_passing"
+    ],
+    "missing_values": {},
+    "encoding_mappings": {},
+    "scaling_params": {
+        "Student Id": {
+            "mean": 207.1920731707317,
+            "scale": 117.62112204786827
+        },
+        "current_avg_score": {
+            "mean": 5.828032266260163,
+            "scale": 1.4750805417573365
+        },
+        "performance_consistency": {
+            "mean": 3.0201816470652,
+            "scale": 1.4743860764638181
+        },
+        "current_performance_level": {
+            "mean": 0.05828032266260163,
+            "scale": 0.014750805417573365
+        },
+        "quiz_performance": {
+            "mean": 0.062012195121951205,
+            "scale": 0.02218211562764077
+        },
+        "assignment_performance": {
+            "mean": 0.033714939024390246,
+            "scale": 0.008627034365730873
+        },
+        "assignment_consistency": {
+            "mean": 0.0,
+            "scale": 1.0
+        },
+        "exam_performance": {
+            "mean": 0.07916097560975609,
+            "scale": 0.03586366717777798
+        },
+        "score_progression": {
+            "mean": 0.8574390243902429,
+            "scale": 2.0499718534508
+        },
+        "overall_improvement": {
+            "mean": 1.7148780487804878,
+            "scale": 4.099943706901602
+        },
+        "improvement_rate": {
+            "mean": 0.5716260162601626,
+            "scale": 1.3666479023005338
+        },
+        "score_volatility": {
+            "mean": 5.792591463414634,
+            "scale": 2.8303571573170596
+        },
+        "rank_consistency": {
+            "mean": 0.26157646346891844,
+            "scale": 0.11961899965203307
+        },
+        "theory_score": {
+            "mean": 0.07058658536585366,
+            "scale": 0.021653775157791218
+        },
+        "practical_score": {
+            "mean": 0.033714939024390246,
+            "scale": 0.008627034365730873
+        },
+        "theory_vs_practical": {
+            "mean": 0.03697762957317073,
+            "scale": 0.02323530103564842
+        },
+        "theoretical_strength": {
+            "mean": 1.0,
+            "scale": 1.0
+        },
+        "performance_risk": {
+            "mean": 0.5030487804878049,
+            "scale": 0.4999907048511374
+        },
+        "consistency_risk": {
+            "mean": 0.5,
+            "scale": 0.5
+        },
+        "progression_risk": {
+            "mean": 0.375,
+            "scale": 0.4841229182759271
+        },
+        "comprehensive_risk_score": {
+            "mean": 0.4765243902439025,
+            "scale": 0.2428818203847474
+        },
+        "high_performer": {
+            "mean": 0.24085365853658536,
+            "scale": 0.4276016530675803
+        },
+        "consistent_performer": {
+            "mean": 0.25914634146341464,
+            "scale": 0.4381660817196396
+        },
+        "improving_student": {
+            "mean": 0.625,
+            "scale": 0.4841229182759271
+        },
+        "performance_zscore": {
+            "mean": -0.015280769910984216,
+            "scale": 0.9915715577670814
+        },
+        "distance_from_passing": {
+            "mean": -0.5417196773373983,
+            "scale": 0.014750805417573364
+        }
+    },
+    "class_distribution": {
+        "train": {
+            "1": 252,
+            "0": 40,
+            "2": 36
+        },
+        "test": {
+            "1": 63,
+            "0": 10,
+            "2": 9
+        }
+    },
+    "prediction_point": "midterm"
+}

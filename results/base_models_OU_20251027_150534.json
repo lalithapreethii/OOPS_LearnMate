@@ -1,0 +1,55 @@
+{
+    "timestamp": "2025-10-27 15:05:34",
+    "dataset": "OU",
+    "cv_results": {
+        "xgboost": {
+            "best_score": 1.0,
+            "best_params": {
+                "subsample": 0.9,
+                "n_estimators": 300,
+                "max_depth": 5,
+                "learning_rate": 0.1,
+                "colsample_bytree": 0.9
+            }
+        },
+        "random_forest": {
+            "best_score": 1.0,
+            "best_params": {
+                "n_estimators": 300,
+                "min_samples_split": 5,
+                "min_samples_leaf": 4,
+                "max_depth": 30
+            }
+        },
+        "lightgbm": {
+            "best_score": 1.0,
+            "best_params": {
+                "num_leaves": 31,
+                "n_estimators": 200,
+                "max_depth": -1,
+                "learning_rate": 0.05
+            }
+        }
+    },
+    "best_parameters": {
+        "xgboost": {
+            "subsample": 0.9,
+            "n_estimators": 300,
+            "max_depth": 5,
+            "learning_rate": 0.1,
+            "colsample_bytree": 0.9
+        },
+        "random_forest": {
+            "n_estimators": 300,
+            "min_samples_split": 5,
+            "min_samples_leaf": 4,
+            "max_depth": 30
+        },
+        "lightgbm": {
+            "num_leaves": 31,
+            "n_estimators": 200,
+            "max_depth": -1,
+            "learning_rate": 0.05
+        }
+    }
+}
