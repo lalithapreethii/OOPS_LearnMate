@@ -1,22 +1,59 @@
 # Large data files
-data/raw/
-*.csv
-*.zip
+data/raw/ou_data/*.csv
+data/raw/ou_data/*.zip
+data/raw/ai_course_data/**/*.csv
+data/raw/uci_data/*.csv
+data/raw/uci_data/*.zip
+data/processed/*.csv
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
-
 # Models
 *.pkl
 
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Build
+build/
+dist/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# Node modules
+node_modules/
+
 # Environment
 .env
 .venv
-env/
 venv/
+env/
 ENV/
+=======
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual Environment
+venv/
+env/
+
+# Model files
+models/*.pkl
+
+# IDE settings
+.vscode/
+.idea/
+
+# Log files
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749

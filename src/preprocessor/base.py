@@ -22,12 +22,15 @@ class BasePreprocessor:
         self.test_data = None
         self.scalers = {}
         self.encoders = {}
+<<<<<<< HEAD
         
         # Define common weakness thresholds
         self.weakness_thresholds = {
             'strong': 0.75,  # Above 75th percentile
             'moderate': 0.25  # Below 25th percentile is weak
         }
+=======
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
         self.report = {
             'dataset_name': dataset_name,
             'original_shape': None,
@@ -57,6 +60,7 @@ class BasePreprocessor:
         self.processed_dir.mkdir(parents=True, exist_ok=True)
         self.reports_dir.mkdir(parents=True, exist_ok=True)
     
+<<<<<<< HEAD
     def create_weakness_levels(self, df: pd.DataFrame, score_column: str) -> pd.DataFrame:
         """Create weakness levels based on performance scores"""
         self.logger.info("Creating weakness level target...")
@@ -81,6 +85,8 @@ class BasePreprocessor:
         
         return df
     
+=======
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
     def handle_missing_values(self, df: pd.DataFrame) -> pd.DataFrame:
         """Handle missing values using median for numerical and mode for categorical"""
         self.logger.info("Handling missing values...")

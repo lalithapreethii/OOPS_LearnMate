@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 """
 Fixed UCI Preprocessor - Prevents temporal data leakage
 Only uses information available BEFORE the prediction point
 """
 
+=======
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
 from .base import BasePreprocessor
 import pandas as pd
 import numpy as np
@@ -10,6 +13,7 @@ from typing import Tuple
 from sklearn.model_selection import train_test_split
 
 class UCIPreprocessor(BasePreprocessor):
+<<<<<<< HEAD
     def __init__(self, prediction_grade='G2'):
         """
         Initialize UCI preprocessor
@@ -22,6 +26,10 @@ class UCIPreprocessor(BasePreprocessor):
         super().__init__("UCI")
         self.prediction_grade = prediction_grade
         self.logger.info(f"Initialized UCI preprocessor with prediction target: {prediction_grade}")
+=======
+    def __init__(self):
+        super().__init__("UCI")
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
     
     def load_data(self):
         """Load UCI Student Performance Dataset"""
@@ -43,11 +51,15 @@ class UCIPreprocessor(BasePreprocessor):
         self.raw_data = pd.concat([math_df, por_df], ignore_index=True)
         self.report['original_shape'] = self.raw_data.shape
         self.report['features_before'] = self.raw_data.columns.tolist()
+<<<<<<< HEAD
         self.report['prediction_target'] = self.prediction_grade
+=======
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
         
         return self.raw_data
     
     def feature_engineering(self, df: pd.DataFrame) -> pd.DataFrame:
+<<<<<<< HEAD
         """
         Create features using ONLY information available before prediction point
         CRITICAL: No future data leakage
@@ -246,11 +258,34 @@ class UCIPreprocessor(BasePreprocessor):
         
         self.logger.info(f"Feature engineering complete. Total features created: {df.shape[1]}")
         self.logger.info(f"Target variable: {target_grade}")
+=======
+        """Create new features for UCI dataset"""
+        self.logger.info("Performing feature engineering...")
+        
+        # Average of early test scores (only G1, G2)
+        df['avg_score'] = df[['G1', 'G2']].mean(axis=1)
+        
+        # Score trend (using only early scores)
+        df['score_trend'] = (df['G2'] - df['G1'])
+        
+        # Performance consistency
+        df['performance_consistency'] = df[['G1', 'G2', 'G3']].std(axis=1)
+        
+        # At risk flag
+        df['at_risk_flag'] = (df['avg_score'] < 10).astype(int)
+        
+        # Study time efficiency
+        df['time_efficiency'] = df['avg_score'] / df['studytime']
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
         
         return df
     
     def preprocess(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
+<<<<<<< HEAD
         """Preprocess UCI dataset with temporal validation"""
+=======
+        """Preprocess UCI dataset following the defined steps"""
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
         
         # Step 1: Load data
         df = self.load_data()
@@ -258,6 +293,7 @@ class UCIPreprocessor(BasePreprocessor):
         # Step 2: Handle missing values
         df = self.handle_missing_values(df)
         
+<<<<<<< HEAD
         # Step 3: Feature engineering (temporal-aware)
         df = self.feature_engineering(df)  # This already creates weakness_level
         
@@ -271,6 +307,22 @@ class UCIPreprocessor(BasePreprocessor):
         df = self.handle_outliers(df, numeric_columns)
         
         # Step 7: Train-test split (stratified)
+=======
+        # Step 3: Feature engineering
+        df = self.feature_engineering(df)
+        
+        # Step 4: Handle outliers
+        numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+        df = self.handle_outliers(df, numeric_columns)
+        
+        # Step 5: Create target variable
+        df = self.create_weakness_level(df, 'avg_score')
+        
+        # Step 6: Encode categorical variables
+        df = self.encode_categorical(df)
+        
+        # Step 7: Train-test split
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
         train_df, test_df = train_test_split(
             df,
             test_size=0.2,
@@ -278,6 +330,7 @@ class UCIPreprocessor(BasePreprocessor):
             stratify=df['weakness_level']
         )
         
+<<<<<<< HEAD
         self.logger.info(f"Train set: {len(train_df)} samples")
         self.logger.info(f"Test set: {len(test_df)} samples")
         
@@ -285,11 +338,19 @@ class UCIPreprocessor(BasePreprocessor):
         numeric_columns = train_df.select_dtypes(include=['float64', 'int64']).columns
         # Don't scale the target variable
         numeric_columns = [col for col in numeric_columns if col != 'weakness_level']
+=======
+        # Step 8: Scale features
+        numeric_columns = train_df.select_dtypes(include=['float64', 'int64']).columns
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
         train_df, test_df = self.scale_features(train_df, test_df, numeric_columns)
         
         # Update report
         self.report['final_shape'] = df.shape
+<<<<<<< HEAD
         self.report['features_after'] = [col for col in df.columns if col != 'weakness_level']
+=======
+        self.report['features_after'] = df.columns.tolist()
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
         
         # Class distribution
         self.report['class_distribution'] = {
@@ -301,6 +362,17 @@ class UCIPreprocessor(BasePreprocessor):
         self.save_data(train_df, test_df)
         self.save_report()
         
+<<<<<<< HEAD
         self.logger.info("✅ UCI preprocessing complete with temporal validation")
+=======
+        # Plot distributions
+        plot_columns = ['avg_score', 'score_trend', 'performance_consistency']
+        self.plot_distributions(
+            self.raw_data,
+            train_df,
+            plot_columns,
+            self.reports_dir / f"{self.dataset_name}_distributions.png"
+        )
+>>>>>>> 431bf9542c2f2ee979b73168008154307fdc1749
         
         return train_df, test_df
