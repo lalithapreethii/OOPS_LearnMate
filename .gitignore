@@ -28,6 +28,12 @@ dist/
 # Node modules
 node_modules/
 
+# Java build outputs
+target/
+*.class
+*.jar
+!**/src/main/resources/**/*.jar
+
 # Environment
 .env
 .venv

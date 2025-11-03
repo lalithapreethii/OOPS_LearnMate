@@ -1,59 +1,103 @@
 package com.knowwhereyoulack.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.knowwhereyoulack.dto.QuizSubmissionRequest;
-import com.knowwhereyoulack.model.QuizAttempt;
+import com.knowwhereyoulack.dto.QuizResponseDto;
+import com.knowwhereyoulack.dto.TopicWithQuestionCount;
+import com.knowwhereyoulack.model.Question;
 import com.knowwhereyoulack.model.Topic;
-import com.knowwhereyoulack.repository.QuizAttemptRepository;
+import com.knowwhereyoulack.repository.TopicRepository;
 import com.knowwhereyoulack.service.QuizService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/quiz")
+@CrossOrigin(origins = "http://localhost:5173")
 public class QuizController {
-
+    
     private final QuizService quizService;
-    private final QuizAttemptRepository quizAttemptRepository;
-
-    public QuizController(QuizService quizService, QuizAttemptRepository quizAttemptRepository) {
+    private final TopicRepository topicRepository;
+    
+    @Autowired
+    public QuizController(QuizService quizService, TopicRepository topicRepository) {
         this.quizService = quizService;
-        this.quizAttemptRepository = quizAttemptRepository;
+        this.topicRepository = topicRepository;
     }
-
+    
+    /**
+     * Get all topics with question counts
+     */
     @GetMapping("/topics")
-    public ResponseEntity<List<Topic>> topics() {
-        return ResponseEntity.ok(quizService.getAllTopics());
+    public ResponseEntity<List<TopicWithQuestionCount>> getAllTopics() {
+        try {
+            List<TopicWithQuestionCount> topics = quizService.getAllTopicsWithQuestionCount();
+            return ResponseEntity.ok(topics);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-
-    @GetMapping("/{topicId}")
-    @PreAuthorize("hasAnyRole('STUDENT','ADMIN','TEACHER')")
-    public ResponseEntity<?> generateQuiz(@PathVariable Long topicId, @RequestParam(required = false) Long userId) {
-        var quiz = quizService.generateQuiz(topicId, userId);
-        return ResponseEntity.ok(quiz);
+    
+    /**
+     * Get questions by topic and difficulty level
+     * Returns QuizResponseDto with topic info and 10 random questions
+     */
+    @GetMapping("/{topicId}/difficulty/{difficulty}")
+    public ResponseEntity<QuizResponseDto> getQuestionsByDifficulty(
+            @PathVariable Long topicId,
+            @PathVariable String difficulty) {
+        
+        try {
+            // Get the topic details
+            Optional<Topic> topicOptional = topicRepository.findById(topicId);
+            if (!topicOptional.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            Topic topic = topicOptional.get();
+            
+            // Get 10 random questions for this topic and difficulty
+            List<Question> questions = quizService.getQuestionsByTopicAndDifficulty(
+                topicId, 
+                difficulty.toUpperCase()
+            );
+            
+            // Create response DTO
+            QuizResponseDto response = new QuizResponseDto(
+                topic.getTopicId(),
+                topic.getTopicName(),
+                questions
+            );
+            
+            if (questions.isEmpty()) {
+                System.out.println("⚠️ WARNING: No questions found for topic " + topicId + 
+                                 " with difficulty " + difficulty);
+            } else {
+                System.out.println("✅ Returning " + questions.size() + " questions for topic " + 
+                                 topicId + " with difficulty " + difficulty);
+            }
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("❌ ERROR in getQuestionsByDifficulty: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-
-    @PostMapping("/submit")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<?> submitQuiz(@RequestBody QuizSubmissionRequest req) {
-        String result = quizService.submitQuiz(req);
-        return ResponseEntity.ok(Map.of("message", result));
-    }
-
-    @GetMapping("/history/{userId}")
-    @PreAuthorize("hasAnyRole('STUDENT','ADMIN','TEACHER')")
-    public ResponseEntity<?> history(@PathVariable Long userId) {
-        List<QuizAttempt> attempts = quizAttemptRepository.findByUser_UserId(userId);
-        return ResponseEntity.ok(attempts);
+    
+    /**
+     * Get all questions for a topic
+     */
+    @GetMapping("/{topicId}/questions")
+    public ResponseEntity<List<Question>> getAllQuestions(@PathVariable Long topicId) {
+        try {
+            List<Question> questions = quizService.getAllQuestionsByTopic(topicId);
+            return ResponseEntity.ok(questions);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

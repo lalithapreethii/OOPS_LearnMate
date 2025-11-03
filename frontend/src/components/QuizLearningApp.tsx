@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { BookOpen, MessageSquare, BarChart3, Plus, User, LogOut, ChevronRight, Check, X, Send } from 'lucide-react';
 
-// Configuration - Update these with your backend URLs
-const API_BASE_URL = 'http://localhost:8080/api';
+// Temporarily point frontend to backend port 8082 to avoid conflicts with services
+const API_BASE_URL = 'http://localhost:8082/api';
 
-// Types for API responses
 interface AuthResponse {
   token: string;
   user: {
@@ -19,7 +18,6 @@ interface ApiError {
   status: number;
 }
 
-// Axios-like fetch wrapper
 const api = {
   get: async <T,>(url: string): Promise<T> => {
     const response = await fetch(`${API_BASE_URL}${url}`, {
@@ -50,7 +48,7 @@ const api = {
 
 export default function QuizLearningApp() {
   type View = 'login' | 'dashboard' | 'quiz' | 'chat' | 'analysis' | 'chatbot' | 'analytics' | 'results';
-  
+
   interface BaseResponse {
     success: boolean;
     message?: string;
@@ -101,12 +99,6 @@ export default function QuizLearningApp() {
     questions: QuizQuestion[];
   }
 
-  interface QuizState {
-    currentQuestion: number;
-    answers: QuizAnswer[];
-    score: number;
-  }
-
   interface ChatMessage {
     id: number;
     text: string;
@@ -120,19 +112,18 @@ export default function QuizLearningApp() {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+  const [quizAnswers, setQuizAnswers] = useState<QuizAnswer[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
 
-  // Login Component
   const LoginView = () => {
-    const [credentials, setCredentials] = useState({ 
-      email: '', 
+    const [credentials, setCredentials] = useState({
+      email: '',
       password: '',
-      fullName: '' 
+      fullName: ''
     });
     const [isSignup, setIsSignup] = useState(false);
 
@@ -140,17 +131,36 @@ export default function QuizLearningApp() {
       setLoading(true);
       try {
         const endpoint = isSignup ? '/auth/register' : '/auth/login';
-        const response = await api.post<AuthResponse>(endpoint, credentials);
-        setUser(response.user);
-        setCurrentView('dashboard');
-        localStorage.setItem('token', response.token);
+        const response = await api.post<any>(endpoint, credentials);
+
+        if (isSignup) {
+          // register -> backend returns user object directly
+          const userResp = response as { userId?: number; name?: string; email?: string };
+          setUser({ id: userResp.userId || 0, email: userResp.email || credentials.email, fullName: userResp.name || credentials.fullName });
+          setCurrentView('dashboard');
+        } else {
+          // login -> backend returns { token }
+          const loginResp = response as { token?: string };
+          if (!loginResp?.token) throw new Error('Authentication failed: no token returned');
+          localStorage.setItem('token', loginResp.token);
+
+          // fetch user profile
+          try {
+            const me = await api.get<{ userId: number; name: string; email: string }>('/auth/me');
+            setUser({ id: me.userId, email: me.email, fullName: me.name });
+          } catch {
+            // fallback demo user
+            setUser({ id: 1, email: credentials.email || 'demo@example.com', fullName: credentials.fullName || 'Demo User' });
+          }
+
+          setCurrentView('dashboard');
+        }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Authentication failed';
         alert(message);
-        if (isSignup) return; // Don't allow demo mode for signup
-        // Demo mode only for login
-        setUser({ 
-          id: 1, 
+        if (isSignup) return;
+        setUser({
+          id: 1,
           email: credentials.email || 'demo@example.com',
           fullName: credentials.fullName || 'Demo User'
         });
@@ -170,7 +180,7 @@ export default function QuizLearningApp() {
             <h1 className="text-3xl font-bold text-gray-900">AI Quiz Master</h1>
             <p className="text-gray-600 mt-2">Learn smarter with personalized quizzes</p>
           </div>
-          
+
           <div className="space-y-4">
             {isSignup && (
               <div>
@@ -178,7 +188,7 @@ export default function QuizLearningApp() {
                 <input
                   type="text"
                   value={credentials.fullName}
-                  onChange={(e) => setCredentials({...credentials, fullName: e.target.value})}
+                  onChange={(e) => setCredentials({ ...credentials, fullName: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   placeholder="Enter your full name"
                   required
@@ -190,7 +200,7 @@ export default function QuizLearningApp() {
               <input
                 type="email"
                 value={credentials.email}
-                onChange={(e) => setCredentials({...credentials, email: e.target.value})}
+                onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Enter email"
                 required
@@ -201,7 +211,7 @@ export default function QuizLearningApp() {
               <input
                 type="password"
                 value={credentials.password}
-                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Enter password"
                 required
@@ -215,7 +225,7 @@ export default function QuizLearningApp() {
               {loading ? 'Loading...' : (isSignup ? 'Sign Up' : 'Login')}
             </button>
           </div>
-          
+
           <div className="mt-6 text-center">
             <button
               onClick={() => setIsSignup(!isSignup)}
@@ -229,21 +239,17 @@ export default function QuizLearningApp() {
     );
   };
 
-  // Dashboard Component
   const DashboardView = () => {
     const [showAddTopic, setShowAddTopic] = useState(false);
     const [newTopic, setNewTopic] = useState({ name: '', description: '' });
 
-    useEffect(() => {
-      loadTopics();
-    }, []);
+    useEffect(() => { loadTopics(); }, []);
 
     const loadTopics = async () => {
       try {
         const response = await api.get<TopicsResponse>('/topics');
         setTopics(response.topics);
-      } catch (error) {
-        // Demo data if API fails
+      } catch {
         setTopics([
           { id: 1, name: 'JavaScript Fundamentals', description: 'Learn the basics of JavaScript', quizCount: 5 },
           { id: 2, name: 'React Hooks', description: 'Master React Hooks', quizCount: 3 },
@@ -258,23 +264,22 @@ export default function QuizLearningApp() {
         loadTopics();
         setShowAddTopic(false);
         setNewTopic({ name: '', description: '' });
-      } catch (error) {
+      } catch {
         alert('Failed to add topic. Try again.');
       }
     };
 
-    const startQuiz = (topic) => {
+    const startQuiz = (topic: Topic) => {
       setSelectedTopic(topic);
       setCurrentView('quiz');
       loadQuiz(topic.id);
     };
 
-    const loadQuiz = async (topicId) => {
+    const loadQuiz = async (topicId: number) => {
       try {
-        const data = await api.get(`/quizzes/topic/${topicId}`);
-        setQuiz(data);
-      } catch (error) {
-        // Demo quiz
+        const data = await api.get<QuizResponse>(`/quizzes/topic/${topicId}`);
+        setQuiz(data.quiz);
+      } catch {
         setQuiz({
           id: 1,
           title: topics.find(t => t.id === topicId)?.name || 'Quiz',
@@ -321,17 +326,11 @@ export default function QuizLearningApp() {
               <h1 className="text-2xl font-bold text-gray-900">AI Quiz Master</h1>
             </div>
             <div className="flex items-center space-x-6">
-              <button
-                onClick={() => setCurrentView('chatbot')}
-                className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition-colors"
-              >
+              <button onClick={() => setCurrentView('chatbot')} className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition-colors">
                 <MessageSquare className="w-5 h-5" />
                 <span>AI Tutor</span>
               </button>
-              <button
-                onClick={() => setCurrentView('analytics')}
-                className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition-colors"
-              >
+              <button onClick={() => setCurrentView('analytics')} className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition-colors">
                 <BarChart3 className="w-5 h-5" />
                 <span>Analytics</span>
               </button>
@@ -342,10 +341,7 @@ export default function QuizLearningApp() {
                   </div>
                   <span className="font-medium text-gray-700">{user?.fullName}</span>
                 </div>
-                <button
-                  onClick={() => { setUser(null); setCurrentView('login'); }}
-                  className="text-gray-500 hover:text-red-600 transition-colors"
-                >
+                <button onClick={() => { setUser(null); setCurrentView('login'); }} className="text-gray-500 hover:text-red-600 transition-colors">
                   <LogOut className="w-5 h-5" />
                 </button>
               </div>
@@ -359,10 +355,7 @@ export default function QuizLearningApp() {
               <h2 className="text-3xl font-bold text-gray-900">My Topics</h2>
               <p className="text-gray-600 mt-2">Choose a topic to start learning</p>
             </div>
-            <button
-              onClick={() => setShowAddTopic(true)}
-              className="flex items-center space-x-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-            >
+            <button onClick={() => setShowAddTopic(true)} className="flex items-center space-x-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
               <Plus className="w-5 h-5" />
               <span>Add Topic</span>
             </button>
@@ -375,35 +368,15 @@ export default function QuizLearningApp() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Topic Name</label>
-                    <input
-                      type="text"
-                      value={newTopic.name}
-                      onChange={(e) => setNewTopic({...newTopic, name: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    />
+                    <input type="text" value={newTopic.name} onChange={(e) => setNewTopic({ ...newTopic, name: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea
-                      value={newTopic.description}
-                      onChange={(e) => setNewTopic({...newTopic, description: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      rows={3}
-                    />
+                    <textarea value={newTopic.description} onChange={(e) => setNewTopic({ ...newTopic, description: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" rows={3} />
                   </div>
                   <div className="flex space-x-3">
-                    <button
-                      onClick={handleAddTopic}
-                      className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
-                    >
-                      Add Topic
-                    </button>
-                    <button
-                      onClick={() => setShowAddTopic(false)}
-                      className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300"
-                    >
-                      Cancel
-                    </button>
+                    <button onClick={handleAddTopic} className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Add Topic</button>
+                    <button onClick={() => setShowAddTopic(false)} className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -417,10 +390,7 @@ export default function QuizLearningApp() {
                 <p className="text-gray-600 mb-4">{topic.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">{topic.quizCount || 0} quizzes</span>
-                  <button
-                    onClick={() => startQuiz(topic)}
-                    className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-                  >
+                  <button onClick={() => startQuiz(topic)} className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                     <span>Start Quiz</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -433,40 +403,27 @@ export default function QuizLearningApp() {
     );
   };
 
-  // Quiz Component
   const QuizView = () => {
-    const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [showResult, setShowResult] = useState(false);
-    const [answers, setAnswers] = useState([]);
 
-    const handleAnswerSelect = (index) => {
-      if (!showResult) {
-        setSelectedAnswer(index);
-      }
+    const handleAnswerSelect = (index: number) => {
+      if (!showResult) setSelectedAnswer(index);
     };
 
     const handleSubmitAnswer = () => {
       if (selectedAnswer === null) return;
-      
       if (!quiz) return;
-      
       const currentQ = quiz.questions[currentQuestion];
       const isCorrect = selectedAnswer === currentQ.correctAnswer;
-      
-      setAnswers(prev => [...prev, { 
-        questionId: currentQ.id, 
-        correct: isCorrect,
-        selected: selectedAnswer 
-      }]);
-      
-      if (isCorrect) {
-        setScore(score + 1);
-      }
-      
+
+      setQuizAnswers((prev) => [...prev, { questionId: currentQ.id, correct: isCorrect, selected: selectedAnswer }]);
+      if (isCorrect) setScore(score + 1);
       setShowResult(true);
     };
 
     const handleNextQuestion = () => {
+      if (!quiz) return;
       if (currentQuestion < quiz.questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
         setSelectedAnswer(null);
@@ -477,16 +434,15 @@ export default function QuizLearningApp() {
     };
 
     const submitQuizResults = async () => {
+      if (!quiz) return;
       try {
         await api.post('/quiz-results', {
           quizId: quiz.id,
-          score: score,
+          score,
           totalQuestions: quiz.questions.length,
-          answers: answers
+          answers: quizAnswers
         });
-      } catch (error) {
-        console.error('Failed to submit results');
-      }
+      } catch { }
       setCurrentView('results');
     };
 
@@ -494,7 +450,7 @@ export default function QuizLearningApp() {
       return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto" />
             <p className="mt-4 text-gray-600">Loading quiz...</p>
           </div>
         </div>
@@ -508,36 +464,16 @@ export default function QuizLearningApp() {
         <div className="max-w-3xl mx-auto pt-8">
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="flex justify-between items-center mb-6">
-              <button
-                onClick={() => {
-                  setCurrentView('dashboard');
-                  setQuiz(null);
-                  setCurrentQuestion(0);
-                  setScore(0);
-                  setAnswers([]);
-                  setSelectedAnswer(null);
-                  setShowResult(false);
-                }}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                ← Back to Dashboard
-              </button>
+              <button onClick={() => { setCurrentView('dashboard'); setQuiz(null); setCurrentQuestion(0); setScore(0); setQuizAnswers([]); setSelectedAnswer(null); setShowResult(false); }} className="text-gray-600 hover:text-gray-900 transition-colors">← Back to Dashboard</button>
               <div className="flex items-center space-x-4">
-                <span className="text-sm font-medium text-gray-600">
-                  Question {currentQuestion + 1} of {quiz.questions.length}
-                </span>
-                <span className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full font-semibold">
-                  Score: {score}/{quiz.questions.length}
-                </span>
+                <span className="text-sm font-medium text-gray-600">Question {currentQuestion + 1} of {quiz.questions.length}</span>
+                <span className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full font-semibold">Score: {score}/{quiz.questions.length}</span>
               </div>
             </div>
 
             <div className="mb-8">
               <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
-                <div
-                  className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
-                ></div>
+                <div className="bg-indigo-600 h-2 rounded-full transition-all duration-300" style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}></div>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">{question.question}</h2>
             </div>
@@ -600,16 +536,13 @@ export default function QuizLearningApp() {
     );
   };
 
-  // Results View
   const ResultsView = () => {
     const percentage = quiz ? Math.round((score / quiz.questions.length) * 100) : 0;
-    
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-          <div className={`w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center ${
-            percentage >= 70 ? 'bg-green-100' : 'bg-yellow-100'
-          }`}>
+          <div className={`w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center ${percentage >= 70 ? 'bg-green-100' : 'bg-yellow-100'}`}>
             <span className="text-4xl">{percentage >= 70 ? '🎉' : '📚'}</span>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Quiz Complete!</h2>
@@ -619,34 +552,18 @@ export default function QuizLearningApp() {
           </div>
           <p className="text-xl text-gray-700 mb-8">{percentage}% Correct</p>
           <div className="space-y-3">
-            <button
-              onClick={() => {
-                setCurrentView('dashboard');
-                setQuiz(null);
-                setCurrentQuestion(0);
-                setScore(0);
-              }}
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
-            >
-              Back to Dashboard
-            </button>
-            <button
-              onClick={() => setCurrentView('chatbot')}
-              className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-            >
-              Ask AI Tutor for Help
-            </button>
+            <button onClick={() => { setCurrentView('dashboard'); setQuiz(null); setCurrentQuestion(0); setScore(0); setQuizAnswers([]); }} className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">Back to Dashboard</button>
+            <button onClick={() => setCurrentView('chatbot')} className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">Ask AI Tutor for Help</button>
           </div>
         </div>
       </div>
     );
   };
 
-  // Chatbot View
   const ChatbotView = () => {
     const sendMessage = async () => {
       if (!chatInput.trim()) return;
-      
+
       const userMessage: ChatMessage = { 
         id: Date.now(), 
         text: chatInput, 
@@ -654,25 +571,32 @@ export default function QuizLearningApp() {
         timestamp: new Date() 
       };
       setChatMessages(prev => [...prev, userMessage]);
+      const currentInput = chatInput;
       setChatInput('');
-      
+      setIsTyping(true);
+
       try {
-        const response = await api.post('/chatbot/message', { message: chatInput });
-        const botResponse = response as { reply: string };
+        const response = await api.post('/chatbot/message', { message: currentInput });
+        const botResponse = response as { reply: string; error?: string };
+        
         const botMessage: ChatMessage = { 
-          id: Date.now(), 
-          text: botResponse.reply, 
-          sender: 'bot', 
+          id: Date.now() + 1, 
+          text: botResponse.reply || botResponse.error || "I'm having trouble responding right now.", 
+          sender: 'ai', 
           timestamp: new Date() 
         };
         setChatMessages(prev => [...prev, botMessage]);
       } catch (error) {
-        const botMessage = {
-          text: "I'm here to help! I can answer questions about your quiz topics, explain concepts, and provide study tips. What would you like to know?",
-          sender: 'bot',
+        const errorMessage = error instanceof Error ? error.message : 'Network error';
+        const botMessage: ChatMessage = {
+          id: Date.now() + 1,
+          text: `⚠️ ${errorMessage}\n\nI'm here to help with:\n• Mathematics & Science\n• Programming & Computer Science\n• Language & Literature\n• Study strategies & tips\n\nWhat would you like to learn about?`,
+          sender: 'ai',
           timestamp: new Date()
         };
         setChatMessages(prev => [...prev, botMessage]);
+      } finally {
+        setIsTyping(false);
       }
     };
 
@@ -682,14 +606,12 @@ export default function QuizLearningApp() {
           <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
             <div className="flex items-center space-x-3">
               <MessageSquare className="w-8 h-8 text-indigo-600" />
-              <h1 className="text-2xl font-bold text-gray-900">AI Tutor</h1>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Skilli - AI Tutor</h1>
+                <p className="text-xs text-gray-500">Education-focused assistant</p>
+              </div>
             </div>
-            <button
-              onClick={() => setCurrentView('dashboard')}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              ← Back to Dashboard
-            </button>
+            <button onClick={() => setCurrentView('dashboard')} className="text-gray-600 hover:text-gray-900 transition-colors">← Back to Dashboard</button>
           </div>
         </nav>
 
@@ -699,40 +621,83 @@ export default function QuizLearningApp() {
               {chatMessages.length === 0 && (
                 <div className="text-center text-gray-500 mt-20">
                   <MessageSquare className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                  <p className="text-lg">Ask me anything about your topics!</p>
-                  <p className="text-sm mt-2">I can explain concepts, create practice questions, and help you learn.</p>
+                  <p className="text-lg font-semibold">👋 Hi! I'm Skilli, your AI study companion!</p>
+                  <p className="text-sm mt-2">I can help you with:</p>
+                  <div className="mt-4 space-y-2 text-left max-w-md mx-auto">
+                    <div className="flex items-start space-x-2">
+                      <span className="text-indigo-600">📚</span>
+                      <span className="text-sm">Math, Science, Programming & more</span>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <span className="text-indigo-600">💡</span>
+                      <span className="text-sm">Explaining complex concepts simply</span>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <span className="text-indigo-600">✍️</span>
+                      <span className="text-sm">Study tips and learning strategies</span>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <span className="text-indigo-600">🎯</span>
+                      <span className="text-sm">Practice problems and examples</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-6">Ask me anything educational!</p>
                 </div>
               )}
               {chatMessages.map((msg, index) => (
                 <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
-                    msg.sender === 'user'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-100 text-gray-900'
+                    msg.sender === 'user' 
+                      ? 'bg-indigo-600 text-white' 
+                      : 'bg-gray-100 text-gray-900 border border-gray-200'
                   }`}>
-                    <p>{msg.text}</p>
+                    {msg.sender === 'ai' && (
+                      <div className="flex items-center space-x-2 mb-1">
+                        <span className="text-xs font-semibold text-indigo-600">🤖 Skilli</span>
+                      </div>
+                    )}
+                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                    <span className="text-xs opacity-70 mt-1 block">
+                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                 </div>
               ))}
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 px-4 py-3 rounded-2xl border border-gray-200">
+                    <div className="flex space-x-2">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-            
-            <div className="border-t border-gray-200 p-4">
+
+            <div className="border-t border-gray-200 p-4 bg-gray-50">
               <div className="flex space-x-3">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  placeholder="Type your question..."
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                <input 
+                  type="text" 
+                  value={chatInput} 
+                  onChange={(e) => setChatInput(e.target.value)} 
+                  onKeyPress={(e) => e.key === 'Enter' && !isTyping && sendMessage()} 
+                  placeholder="Ask about math, science, programming..." 
+                  disabled={isTyping}
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50" 
                 />
-                <button
-                  onClick={sendMessage}
-                  className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                <button 
+                  onClick={sendMessage} 
+                  disabled={isTyping || !chatInput.trim()}
+                  className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-5 h-5" />
                 </button>
               </div>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                💡 Tip: Ask specific questions for better answers
+              </p>
             </div>
           </div>
         </div>
@@ -740,66 +705,54 @@ export default function QuizLearningApp() {
     );
   };
 
-  // Analytics View
-  const AnalyticsView = () => {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <nav className="bg-white shadow-sm border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <BarChart3 className="w-8 h-8 text-indigo-600" />
-              <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
-            </div>
-            <button
-              onClick={() => setCurrentView('dashboard')}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              ← Back to Dashboard
-            </button>
+  const AnalyticsView = () => (
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <BarChart3 className="w-8 h-8 text-indigo-600" />
+            <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
           </div>
-        </nav>
+          <button onClick={() => setCurrentView('dashboard')} className="text-gray-600 hover:text-gray-900 transition-colors">← Back to Dashboard</button>
+        </div>
+      </nav>
 
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <h3 className="text-gray-600 text-sm font-medium mb-2">Total Quizzes</h3>
-              <p className="text-3xl font-bold text-indigo-600">12</p>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <h3 className="text-gray-600 text-sm font-medium mb-2">Average Score</h3>
-              <p className="text-3xl font-bold text-green-600">78%</p>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <h3 className="text-gray-600 text-sm font-medium mb-2">Study Streak</h3>
-              <p className="text-3xl font-bold text-orange-600">5 days</p>
-            </div>
-          </div>
-
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-md p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Performance</h3>
-            <div className="space-y-4">
-              {['JavaScript Fundamentals', 'React Hooks', 'Data Structures'].map((topic, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="font-medium text-gray-700">{topic}</span>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-48 bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-indigo-600 h-2 rounded-full"
-                        style={{ width: `${70 + index * 10}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-sm font-medium text-gray-600">{70 + index * 10}%</span>
+            <h3 className="text-gray-600 text-sm font-medium mb-2">Total Quizzes</h3>
+            <p className="text-3xl font-bold text-indigo-600">12</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h3 className="text-gray-600 text-sm font-medium mb-2">Average Score</h3>
+            <p className="text-3xl font-bold text-green-600">78%</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h3 className="text-gray-600 text-sm font-medium mb-2">Study Streak</h3>
+            <p className="text-3xl font-bold text-orange-600">5 days</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Performance</h3>
+          <div className="space-y-4">
+            {['JavaScript Fundamentals', 'React Hooks', 'Data Structures'].map((topic, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <span className="font-medium text-gray-700">{topic}</span>
+                <div className="flex items-center space-x-4">
+                  <div className="w-48 bg-gray-200 rounded-full h-2">
+                    <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${70 + index * 10}%` }}></div>
                   </div>
+                  <span className="text-sm font-medium text-gray-600">{70 + index * 10}%</span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
-  // Main render
   return (
     <div>
       {currentView === 'login' && <LoginView />}

@@ -12,10 +12,17 @@
 
 @layer base {
   body {
-    @apply bg-gray-50;
+    /* Use explicit background color to avoid @apply errors */
+    background-color: #f9fafb; /* Tailwind bg-gray-50 */
   }
 
   a {
-    @apply font-medium text-indigo-600 hover:text-indigo-700;
+    /* Use explicit styles instead of @apply to avoid processing issues */
+    font-weight: 500;
+    color: #4f46e5; /* Tailwind text-indigo-600 */
+  }
+
+  a:hover {
+    color: #4338ca; /* Tailwind text-indigo-700 */
   }
 }

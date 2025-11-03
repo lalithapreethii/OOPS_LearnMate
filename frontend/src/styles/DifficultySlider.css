@@ -1,0 +1,238 @@
+.difficulty-slider-container {
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 16px;
+  margin: 24px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.difficulty-slider-container h3 {
+  margin-bottom: 24px;
+  color: #2c3e50;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ========== SLIDER STYLES ========== */
+.slider-wrapper {
+  position: relative;
+  padding: 0 12px;
+  margin-bottom: 24px;
+}
+
+.difficulty-slider {
+  width: 100%;
+  height: 10px;
+  border-radius: 8px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 32px;
+}
+
+.difficulty-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid #4CAF50;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.difficulty-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.35);
+}
+
+.difficulty-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid #4CAF50;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.difficulty-slider::-moz-range-thumb:hover {
+  transform: scale(1.25);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.35);
+}
+
+.difficulty-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.difficulty-labels span {
+  font-size: 15px;
+  font-weight: 500;
+  color: #7f8c8d;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.difficulty-labels span.active {
+  font-weight: 700;
+  color: #2c3e50;
+  transform: scale(1.15);
+}
+
+/* ========== BADGE STYLES ========== */
+.difficulty-badge {
+  margin-top: 20px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* ========== BUTTON STYLES ========== */
+.difficulty-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.difficulty-btn {
+  flex: 1;
+  padding: 14px 20px;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  background: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.difficulty-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.difficulty-btn.active {
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.difficulty-btn.active.easy {
+  background: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.difficulty-btn.active.medium {
+  background: #FF9800;
+  border-color: #FF9800;
+}
+
+.difficulty-btn.active.hard {
+  background: #F44336;
+  border-color: #F44336;
+}
+
+/* ========== DARK MODE SUPPORT ========== */
+@media (prefers-color-scheme: dark) {
+  .difficulty-slider-container {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  }
+
+  .difficulty-slider-container h3 {
+    color: #ecf0f1;
+  }
+
+  .difficulty-labels span {
+    color: #bdc3c7;
+  }
+
+  .difficulty-labels span.active {
+    color: #ecf0f1;
+  }
+
+  .difficulty-btn {
+    background: #34495e;
+    border-color: #4a5f7f;
+    color: #ecf0f1;
+  }
+}
+
+/* ========== QUIZ CONTAINER STYLES ========== */
+.quiz-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.quiz-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.quiz-header h2 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.quiz-header p {
+  font-size: 16px;
+  color: #7f8c8d;
+}
+
+.loading {
+  text-align: center;
+  padding: 64px;
+  font-size: 24px;
+  color: #7f8c8d;
+}
+
+.no-questions {
+  text-align: center;
+  padding: 48px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-top: 24px;
+}
+
+.no-questions p {
+  font-size: 18px;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.no-questions button {
+  padding: 12px 24px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.no-questions button:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+.quiz-questions {
+  margin-top: 32px;
+}

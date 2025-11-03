@@ -1,0 +1,542 @@
+================================================================================
+KNOW-WHERE-YOU-LACK - COMPLETE PROJECT STRUCTURE
+================================================================================
+
+Know-Where-You-Lack/
+│
+├── README.md
+├── package.json
+├── requirements.txt
+├── create_weakness_levels.py
+├── run_fixed_preprocessing.py
+│
+├── .azure/
+│   └── (Azure deployment configurations)
+│
+├── data/
+│   └── raw/
+│       └── uci_data/
+│           ├── student-merge.R
+│           └── student.txt
+│
+├── database/
+│   ├── schema.sql
+│   ├── setup_topics.sql (NEW)
+│   └── insert_quiz_questions.sql
+│
+├── frontend/
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── postcss.config.cjs
+│   ├── README.md
+│   ├── tailwind.config.cjs
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   ├── vite.config.ts
+│   │
+│   ├── public/
+│   │   └── (static assets)
+│   │
+│   ├── src/
+│   │   ├── App.css
+│   │   ├── App.tsx (1740 lines - Main application)
+│   │   ├── index.css
+│   │   ├── main.tsx
+│   │   │
+│   │   ├── assets/
+│   │   │   └── (images, fonts, etc.)
+│   │   │
+│   │   └── components/
+│   │       ├── QuizLearningApp.tsx
+│   │       └── DifficultySlider.tsx (NEW)
+│   │
+│   └── node_modules/
+│       └── (npm dependencies)
+│
+├── java-backend/
+│   ├── pom.xml
+│   ├── .gitignore
+│   │
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/
+│   │       │       └── knowwhereyoulack/
+│   │       │           ├── KnowWhereYouLackApplication.java
+│   │       │           │
+│   │       │           ├── config/
+│   │       │           │   ├── CorsConfig.java
+│   │       │           │   ├── SecurityConfig.java
+│   │       │           │   └── WebConfig.java
+│   │       │           │
+│   │       │           ├── controller/
+│   │       │           │   ├── AnalyticsController.java
+│   │       │           │   ├── AuthController.java
+│   │       │           │   ├── ChatbotController.java
+│   │       │           │   ├── NoteController.java
+│   │       │           │   ├── QuizController.java (MODIFIED)
+│   │       │           │   └── StudySessionController.java
+│   │       │           │
+│   │       │           ├── dto/
+│   │       │           │   ├── AnswerRequest.java
+│   │       │           │   ├── LoginRequest.java
+│   │       │           │   ├── QuizResponseDto.java
+│   │       │           │   ├── QuizSubmissionRequest.java
+│   │       │           │   └── RegisterRequest.java
+│   │       │           │
+│   │       │           ├── exception/
+│   │       │           │   ├── GlobalExceptionHandler.java
+│   │       │           │   └── ResourceNotFoundException.java
+│   │       │           │
+│   │       │           ├── model/
+│   │       │           │   ├── Note.java
+│   │       │           │   ├── Question.java
+│   │       │           │   ├── QuestionOption.java
+│   │       │           │   ├── QuizAttempt.java
+│   │       │           │   ├── QuizResult.java
+│   │       │           │   ├── Subject.java
+│   │       │           │   ├── Topic.java
+│   │       │           │   └── User.java
+│   │       │           │
+│   │       │           ├── repository/
+│   │       │           │   ├── NoteRepository.java
+│   │       │           │   ├── QuestionRepository.java (MODIFIED)
+│   │       │           │   ├── QuizAttemptRepository.java
+│   │       │           │   ├── QuizResultRepository.java
+│   │       │           │   ├── SubjectRepository.java
+│   │       │           │   ├── TopicRepository.java
+│   │       │           │   └── UserRepository.java
+│   │       │           │
+│   │       │           ├── security/
+│   │       │           │   ├── JwtAuthenticationFilter.java
+│   │       │           │   └── JwtTokenProvider.java
+│   │       │           │
+│   │       │           └── service/
+│   │       │               ├── AnalyticsService.java (MODIFIED)
+│   │       │               ├── ChatbotService.java
+│   │       │               ├── NoteService.java
+│   │       │               ├── QuizService.java (MODIFIED)
+│   │       │               ├── UserService.java
+│   │       │               │
+│   │       │               └── impl/
+│   │       │                   ├── AnalyticsServiceImpl.java
+│   │       │                   ├── ChatbotServiceImpl.java
+│   │       │                   ├── NoteServiceImpl.java
+│   │       │                   ├── QuizServiceImpl.java (MODIFIED)
+│   │       │                   └── UserServiceImpl.java
+│   │       │
+│   │       └── resources/
+│   │           └── application.properties
+│   │
+│   └── target/
+│       ├── classes/
+│       │   ├── application.properties
+│       │   └── com/
+│       │       └── knowwhereyoulack/
+│       │           └── (compiled .class files)
+│       │
+│       ├── generated-sources/
+│       │   └── annotations/
+│       │
+│       └── maven-status/
+│           └── maven-compiler-plugin/
+│               └── compile/
+│                   └── default-compile/
+│                       ├── createdFiles.lst
+│                       └── inputFiles.lst
+│
+├── reports/
+│   ├── AI_preprocessing_report.json
+│   ├── evaluation_report.json
+│   ├── OU_preprocessing_report.json
+│   └── UCI_preprocessing_report.json
+│
+├── results/
+│   ├── base_models_OU_20251027_150534.json
+│   ├── feature_importance_OU.json
+│   ├── final_results_summary.csv
+│   └── key_findings.txt
+│
+├── src/
+│   ├── ai_course_analyzer.py
+│   ├── base_models.py
+│   ├── check_features.py
+│   ├── create_literature_comparison.py
+│   ├── data_preprocessor.py
+│   ├── evaluate_model.py
+│   ├── fix_ai_preprocessing.py
+│   ├── fix_feature_selection.py
+│   ├── fix_uci_preprocessing.py
+│   ├── index.css
+│   ├── ou_analytics.py
+│   ├── predict.py
+│   ├── process_datasets.py
+│   ├── run_ou_preprocessing.py
+│   ├── run_preprocessing.py
+│   ├── student_performance_analysis.py
+│   ├── test_ai_dataset.py
+│   ├── test_data_loading.py
+│   ├── train_base_models.py
+│   ├── train_model.py
+│   ├── train_models_clean.py
+│   ├── train_models.py
+│   │
+│   ├── debug/
+│   │   ├── clean_and_retrain_ou.py
+│   │   ├── drop_score_and_retrain_ou.py
+│   │   └── train_test_checks.py
+│   │
+│   └── preprocessor/
+│       ├── __init__.py
+│       ├── ai.py
+│       ├── base.py
+│       ├── ou_enhanced.py
+│       ├── ou.py
+│       └── uci.py
+│
+├── COMPLETE-ML-INTEGRATION-PLAN.md (NEW)
+├── DIFFICULTY-SLIDER-IMPLEMENTATION.md (NEW)
+├── IMPLEMENTATION-SUMMARY.md (NEW)
+├── INTEGRATION-COMPLETE.md
+├── PROJECT-STRUCTURE.txt (THIS FILE)
+├── QUICK-START-DIFFICULTY-SLIDER.md (NEW)
+├── README-QUICK-START.md
+├── START-ALL.ps1
+└── START-WITH-DIFFICULTY-SLIDER.ps1 (NEW)
+
+
+================================================================================
+KEY FILES MODIFIED IN LATEST IMPLEMENTATION (Difficulty Slider)
+================================================================================
+
+BACKEND (Java Spring Boot):
+✅ java-backend/src/main/java/com/knowwhereyoulack/repository/QuestionRepository.java
+   - Added: findByTopicAndDifficultyLevel()
+   - Added: findRandomQuestionsByTopicAndDifficulty()
+   - Added: findRandomQuestionsByTopic()
+
+✅ java-backend/src/main/java/com/knowwhereyoulack/service/QuizService.java
+   - Added: generateQuizByDifficulty() method signature
+
+✅ java-backend/src/main/java/com/knowwhereyoulack/service/impl/QuizServiceImpl.java
+   - Implemented: generateQuizByDifficulty()
+   - Updated: generateQuiz() to use random selection
+
+✅ java-backend/src/main/java/com/knowwhereyoulack/controller/QuizController.java
+   - Added: GET /api/quiz/{topicId}/difficulty/{difficulty} endpoint
+
+FRONTEND (React + TypeScript):
+✅ frontend/src/components/DifficultySlider.tsx (NEW FILE)
+   - Complete difficulty slider component
+   - Color-coded: EASY (Green), MEDIUM (Orange), HARD (Red)
+   - Interactive range slider + buttons
+
+✅ frontend/src/App.tsx (MODIFIED)
+   - Imported DifficultySlider component
+   - Updated startQuiz() to fetch from backend API
+   - Replaced button-based selector with slider component
+
+DATABASE:
+✅ database/setup_topics.sql (NEW FILE)
+   - Sets up all 9 topics matching frontend
+   - Proper subject categorization
+   - Verification queries included
+
+DOCUMENTATION:
+✅ DIFFICULTY-SLIDER-IMPLEMENTATION.md (NEW)
+✅ IMPLEMENTATION-SUMMARY.md (NEW)
+✅ QUICK-START-DIFFICULTY-SLIDER.md (NEW)
+✅ START-WITH-DIFFICULTY-SLIDER.ps1 (NEW)
+
+
+================================================================================
+DATABASE STRUCTURE
+================================================================================
+
+MySQL Database: knowwhereyoulack
+
+Tables:
+├── users
+├── subjects
+├── topics (9 topics configured)
+│   ├── 1. Object-Oriented Programming (MEDIUM)
+│   ├── 2. Data Structures (EASY)
+│   ├── 3. Algorithms (HARD)
+│   ├── 4. Physics (MEDIUM)
+│   ├── 5. Chemistry (MEDIUM)
+│   ├── 6. Operating Systems (HARD)
+│   ├── 7. Math (MEDIUM)
+│   ├── 8. Biology (EASY)
+│   └── 9. AIML Basics (HARD)
+├── questions
+│   └── Columns: question_id, topic_id, question_text, question_type,
+│       difficulty_level (EASY/MEDIUM/HARD), correct_answer, explanation,
+│       is_active, created_at, updated_at
+├── question_options
+├── quiz_attempts
+├── quiz_responses
+├── quiz_results
+├── weakness_analysis
+├── learning_resources
+├── recommendations
+├── chat_history
+├── study_plans
+├── study_plan_tasks
+└── notes
+
+
+================================================================================
+API ENDPOINTS
+================================================================================
+
+QUIZ ENDPOINTS:
+├── GET    /api/quiz/topics
+├── GET    /api/quiz/{topicId}
+├── GET    /api/quiz/{topicId}/difficulty/{difficulty} (NEW)
+├── POST   /api/quiz/submit
+└── GET    /api/quiz/history/{userId}
+
+ANALYTICS ENDPOINTS:
+├── GET    /api/analytics/dashboard/{userId}
+└── POST   /api/analytics/quiz-result
+
+NOTES ENDPOINTS:
+├── GET    /api/notes/user/{userId}
+├── GET    /api/notes/{id}
+├── POST   /api/notes
+├── PUT    /api/notes/{id}
+└── DELETE /api/notes/{id}
+
+STUDY SESSION ENDPOINTS:
+├── POST   /api/study-sessions
+└── GET    /api/study-sessions/user/{userId}
+
+CHATBOT ENDPOINTS:
+└── POST   /api/chatbot/message
+
+AUTH ENDPOINTS:
+├── POST   /api/auth/login
+├── POST   /api/auth/register
+└── POST   /api/auth/logout
+
+
+================================================================================
+RUNNING THE APPLICATION
+================================================================================
+
+STEP 1: Setup Database
+------------------------
+mysql -u root -p
+USE knowwhereyoulack;
+SOURCE D:/Know-Where-You-Lack/database/setup_topics.sql;
+SOURCE D:/Know-Where-You-Lack/database/insert_quiz_questions.sql;
+
+STEP 2: Start Backend
+---------------------
+cd D:\Know-Where-You-Lack\java-backend
+mvn clean install -DskipTests
+mvn spring-boot:run
+
+Backend URL: http://localhost:8082
+
+STEP 3: Start Frontend
+----------------------
+cd D:\Know-Where-You-Lack\frontend
+npm install (if first time)
+npm run dev
+
+Frontend URL: http://localhost:5173
+
+
+================================================================================
+TECHNOLOGY STACK
+================================================================================
+
+FRONTEND:
+├── React 18+
+├── TypeScript
+├── Vite (Build tool)
+├── Tailwind CSS
+├── Lucide React (Icons)
+└── Axios (HTTP client)
+
+BACKEND:
+├── Java 17+
+├── Spring Boot 3.2.0
+├── Spring Security
+├── Spring Data JPA
+├── MySQL 8.0+
+├── Maven
+└── JWT Authentication
+
+ML/ANALYTICS:
+├── Python 3.9+
+├── scikit-learn
+├── pandas
+├── numpy
+└── joblib
+
+EXTERNAL APIs:
+└── GROQ API (Chatbot - llama-3.1-8b-instant)
+
+
+================================================================================
+PACKAGE/DEPENDENCY FILES
+================================================================================
+
+├── frontend/package.json (Node.js dependencies)
+├── java-backend/pom.xml (Maven dependencies)
+├── requirements.txt (Python dependencies)
+└── package.json (Root - if any)
+
+
+================================================================================
+CONFIGURATION FILES
+================================================================================
+
+FRONTEND:
+├── vite.config.ts
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+├── tailwind.config.cjs
+├── postcss.config.cjs
+└── eslint.config.js
+
+BACKEND:
+└── application.properties
+    ├── server.port=8082
+    ├── spring.datasource.url=jdbc:mysql://localhost:3306/knowwhereyoulack
+    ├── spring.datasource.username=root
+    ├── spring.datasource.password=[your_password]
+    ├── spring.jpa.hibernate.ddl-auto=update
+    └── groq.api.key=[your_groq_api_key]
+
+
+================================================================================
+TOTAL FILES COUNT (Approximate)
+================================================================================
+
+Backend Java Files:        45+
+Frontend TypeScript Files: 5
+Python ML Files:          25+
+Database Scripts:         3
+Documentation Files:      10+
+Configuration Files:      15+
+Test Files:              10+
+
+TOTAL:                    100+ files
+
+
+================================================================================
+LINES OF CODE (Approximate)
+================================================================================
+
+App.tsx:                  1,740 lines
+Backend Controllers:      800+ lines
+Backend Services:         1,200+ lines
+Backend Models:           600+ lines
+Backend Repositories:     300+ lines
+Python ML Scripts:        3,000+ lines
+Database Schema:          400+ lines
+
+TOTAL:                    8,000+ lines of code
+
+
+================================================================================
+GIT INFORMATION
+================================================================================
+
+Repository:    Know-Where-You-Lack
+Owner:         JoshikaMannam
+Branch:        main
+Platform:      GitHub
+
+
+================================================================================
+PORTS USED
+================================================================================
+
+Frontend (Vite):          5173
+Backend (Spring Boot):    8082
+MySQL Database:           3306
+ML Service (Future):      5000 (Planned)
+
+
+================================================================================
+ENVIRONMENT VARIABLES NEEDED
+================================================================================
+
+Backend (.env or application.properties):
+├── GROQ_API_KEY=your_groq_api_key_here
+├── JWT_SECRET=your_jwt_secret_here
+├── DB_PASSWORD=your_mysql_password_here
+└── DB_USERNAME=root (or your MySQL user)
+
+Frontend (.env):
+└── VITE_API_BASE_URL=http://localhost:8082/api
+
+
+================================================================================
+GENERATED/BUILD DIRECTORIES (Not in version control)
+================================================================================
+
+├── frontend/node_modules/
+├── frontend/dist/
+├── java-backend/target/
+├── java-backend/.mvn/
+├── __pycache__/
+├── .venv/ (if using Python virtual environment)
+└── *.pyc files
+
+
+================================================================================
+RECENT FEATURES IMPLEMENTED
+================================================================================
+
+✅ Difficulty Slider Component (Animated, Color-coded)
+✅ Backend API for Difficulty-based Question Filtering
+✅ Random 10-question Selection per Quiz
+✅ MySQL Database Integration
+✅ Notes Feature with CRUD Operations
+✅ Dashboard Analytics with Real Data
+✅ Study Timer with Session Tracking
+✅ GROQ Chatbot Integration
+✅ JWT Authentication
+✅ Dark/Light Theme Toggle
+✅ Responsive Design
+✅ Quiz Results Persistence
+✅ Real-time Analytics
+
+
+================================================================================
+PENDING/FUTURE FEATURES
+================================================================================
+
+⏳ Complete questions for remaining 6 topics
+⏳ ML Model Integration (Flask/FastAPI service)
+⏳ Performance Prediction
+⏳ Weakness Analysis with ML
+⏳ Personalized Recommendations
+⏳ Study Plan Generation
+⏳ Automated Testing Suite
+⏳ CI/CD Pipeline
+⏳ Docker Containerization
+⏳ Achievements/Badges System
+
+
+================================================================================
+END OF PROJECT STRUCTURE
+================================================================================
+
+Generated: November 3, 2025
+Last Updated: Difficulty Slider Implementation Complete
+Version: 2.0 (with Difficulty Filtering)
+
+For more details, see:
+- DIFFICULTY-SLIDER-IMPLEMENTATION.md
+- IMPLEMENTATION-SUMMARY.md
+- QUICK-START-DIFFICULTY-SLIDER.md

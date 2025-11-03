@@ -63,10 +63,19 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> me() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
+        
+        // ✅ FIX: Better null checking
+        if (auth == null || !auth.isAuthenticated() || auth.getName() == null) {
             return ResponseEntity.status(401).body(Map.of("error", "Unauthenticated"));
         }
+        
         String email = auth.getName();
+        
+        // ✅ FIX: Handle anonymous authentication
+        if ("anonymousUser".equals(email)) {
+            return ResponseEntity.status(401).body(Map.of("error", "Unauthenticated"));
+        }
+        
         var userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(404).body(Map.of("error", "User not found"));

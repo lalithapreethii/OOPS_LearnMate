@@ -1,70 +1,69 @@
 package com.knowwhereyoulack.service.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
-import com.knowwhereyoulack.dto.AnswerRequest;
-import com.knowwhereyoulack.dto.QuizResponseDto;
-import com.knowwhereyoulack.dto.QuizSubmissionRequest;
-import com.knowwhereyoulack.exception.ResourceNotFoundException;
+import com.knowwhereyoulack.dto.TopicWithQuestionCount;
 import com.knowwhereyoulack.model.Question;
-import com.knowwhereyoulack.model.QuizAttempt;
 import com.knowwhereyoulack.model.Topic;
 import com.knowwhereyoulack.repository.QuestionRepository;
-import com.knowwhereyoulack.repository.QuizAttemptRepository;
 import com.knowwhereyoulack.repository.TopicRepository;
 import com.knowwhereyoulack.service.QuizService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizServiceImpl implements QuizService {
-
-    private final TopicRepository topicRepository;
+    
     private final QuestionRepository questionRepository;
-    private final QuizAttemptRepository quizAttemptRepository;
-
-    public QuizServiceImpl(TopicRepository topicRepository,
-                           QuestionRepository questionRepository,
-                           QuizAttemptRepository quizAttemptRepository) {
-        this.topicRepository = topicRepository;
+    private final TopicRepository topicRepository;
+    
+    @Autowired
+    public QuizServiceImpl(QuestionRepository questionRepository, 
+                           TopicRepository topicRepository) {
         this.questionRepository = questionRepository;
-        this.quizAttemptRepository = quizAttemptRepository;
+        this.topicRepository = topicRepository;
     }
-
+    
     @Override
-    public List<Topic> getAllTopics() {
-        return topicRepository.findAll();
+    public List<TopicWithQuestionCount> getAllTopicsWithQuestionCount() {
+        List<Topic> topics = topicRepository.findAllByOrderByTopicIdAsc();
+        
+        return topics.stream()
+            .map(topic -> {
+                // Use countByTopicId method from QuestionRepository
+                Long questionCount = questionRepository.countByTopicId(topic.getTopicId());
+                return new TopicWithQuestionCount(
+                    topic.getTopicId(),
+                    topic.getTopicName(),
+                    topic.getDifficultyLevel(),
+                    topic.getDescription(),
+                    questionCount != null ? questionCount : 0L
+                );
+            })
+            .collect(Collectors.toList());
     }
-
+    
     @Override
-    public QuizResponseDto generateQuiz(Long topicId, Long userId) {
-        Topic topic = topicRepository.findById(topicId)
-                .orElseThrow(() -> new ResourceNotFoundException("Topic not found"));
-
-        List<Question> questions = questionRepository.findByTopic(topic);
-
-        return new QuizResponseDto(topic.getTopicId(), topic.getTopicName(), questions);
+    public List<Question> getQuestionsByTopicAndDifficulty(Long topicId, String difficulty) {
+        System.out.println("🔍 QuizServiceImpl.getQuestionsByTopicAndDifficulty called");
+        System.out.println("   Topic ID: " + topicId);
+        System.out.println("   Difficulty: " + difficulty);
+        
+        // Use findRandomQuestionsByTopicAndDifficulty from QuestionRepository
+        List<Question> questions = questionRepository.findRandomQuestionsByTopicAndDifficulty(
+            topicId, 
+            difficulty.toUpperCase()
+        );
+        
+        System.out.println("   Questions found: " + questions.size());
+        
+        return questions;
     }
-
+    
     @Override
-    public String submitQuiz(QuizSubmissionRequest request) {
-        QuizAttempt attempt = new QuizAttempt();
-        attempt.setTotalQuestions(request.getAnswers().size());
-        int correct = 0;
-
-        for (AnswerRequest ans : request.getAnswers()) {
-            Question question = questionRepository.findById(ans.getQuestionId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
-
-            if (question.isCorrectAnswer(ans.getSelectedAnswer())) {
-                correct++;
-            }
-        }
-
-        attempt.setCorrectAnswers(correct);
-        attempt.calculateScore();
-        quizAttemptRepository.save(attempt);
-
-        return "Quiz submitted successfully. Score: " + attempt.getScorePercentage() + "%";
+    public List<Question> getAllQuestionsByTopic(Long topicId) {
+        // FIXED: Changed from findByTopicTopicId to findByTopicId
+        return questionRepository.findByTopicId(topicId);
     }
 }

@@ -1,0 +1,15 @@
+/* App.css */
+.logo {
+  height: 6em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo.react {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+.card {
+  padding: 2em;
+}
+.read-the-docs {
+  color: #888;
+}

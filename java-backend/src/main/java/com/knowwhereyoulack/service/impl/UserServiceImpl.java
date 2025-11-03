@@ -31,6 +31,11 @@ public class UserServiceImpl implements UserService {
     public User register(RegisterRequest request) {
         // Spring validation will handle request field validation
 
+        // Check if username already exists
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new ValidationException("Username already exists");
+        }
+
         // Check if email already exists
         if (userRepository.existsByEmail(request.getEmail().toLowerCase().trim())) {
             throw new ValidationException("Email already exists");
@@ -38,6 +43,7 @@ public class UserServiceImpl implements UserService {
 
         // Create and initialize the user entity
         User user = new User();
+        user.setUsername(request.getUsername());
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail().toLowerCase().trim());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
